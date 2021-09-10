@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="zh-CN">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="UTF-8">
+    <meta name="keywords" content="图,关系分析,图可视化,图数据分析"/>
+    <meta name="description" content="关系数据可视化分析"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+    <link rel="shortcut icon" href="{% static 'foodKG/common/icon/favicon.ico' %}">
+    <title>食品安全知识图谱可视化分析</title>
+    <link rel="stylesheet" href="{% static 'foodKG/scripts/bootstrap/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'foodKG/scripts/bootstrap/fontawesome/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'foodKG/scripts/bootstrap/colorpicker/css/bootstrap-colorpicker.css' %}">
+    <link rel="stylesheet" href="{% static 'foodKG/scripts/layer/theme/default/layer.css' %}" />
+    <link rel="stylesheet" href="{% static 'foodKG/style/analyze.css' %}">
+
+    <script type="text/javascript" src="{% static 'foodKG/common/baidu.js' %}"></script>
+
+</head>
+
+<body>
+    {# 顶部工具栏  文件 布局  聚类 统计 过滤 数据  #}
+    <div id="top-bar" class="top-bar">
+      <nav class="animenu"> 
+          <ul class="animenu__nav">
+            <li >
+              <a id="navbox-trigger" href="javascript:;" class="logo-li">
+                 <i class="fa fa-windows"></i>
+              </a>
+            </li>
+            <li>
+              <a href="javascript:;"><i class="fa fa-folder-open"></i>文件</a>
+              <ul type="file" class="animenu__nav__child">
+                <li method="saveLocal"><a href="javascript:;"><i class="fa fa-save"></i>保存当前记录</a></li>
+                <li method="history"><a id="scanHistory" href="javascript:;"><i class="fa fa-history"></i>最近保存记录</a></li>
+                <li method="exportJson"><a id="exportJsonFile" href="javascript:;"><i class="fa fa-cloud-download"></i>导出图数据</a></li>
+                <li method="saveimg"><a href="javascript:;"><i class="fa fa-print"></i>保存图片</a></li>
+              </ul>
+            </li>
+<!--            <li>-->
+<!--              <a href="javascript:;"><i class="fa fa-database"></i>数据</a>-->
+<!--              <ul type="dataset" class="animenu__nav__child">-->
+<!--                <li method="uploadfile"><a href="javascript:;"><i class="fa fa-pencil-square-o"></i>录入三元组</a></li>-->
+<!--                <li method="importData"><a href="javascript:;"><i class="fa fa-pencil-square-o"></i>录入点边数据</a></li>-->
+<!--                <li method="setdata"><a href="javascript:;"><i class="fa fa-pencil-square-o"></i>设置JSON数据</a></li>-->
+<!--&lt;!&ndash;                <li method="gefxfile"><a href="javascript:;"><i class="fa fa-sign-out"></i>gefx文件导入</a></li>&ndash;&gt;-->
+<!--              </ul>-->
+<!--            </li>    -->
+            <li>
+              <a href="javascript:;"><i class="fa fa-sitemap"></i>布局</a>
+              <ul id="layoutNavMenu" type="layout" class="animenu__nav__child">
+                 <li>
+                  <a method="force" href="javascript:;"><i class="fa fa-share-alt"></i>力学模型类</a>
+                  <ul class="list1">
+                    <li class='layoutitem' data-type='frd3'>快速弹性布局</li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <a href="javascript:;"><i class="fa fa-cubes"></i>聚类</a>
+              <ul type="cluster" class="animenu__nav__child">
+                <li method="chinesewisper"><a href="javascript:;"><i class="fa fa-slideshare"></i>ChineseWhisper</a></li>
+                <li method="louvain"><a href="javascript:;"><i class="fa fa-slideshare"></i>Louvain</a></li>
+                <li method="weakcommpent"><a href="javascript:;"><i class="fa fa-slideshare"></i>WeakCommpent</a></li>
+                <li method="bicomponet"><a href="javascript:;"><i class="fa fa-slideshare"></i>Bicomponent</a></li>
+                <li method="newman"><a href="javascript:;"><i class="fa fa-slideshare"></i>Newman</a></li>
+                <li method="kmeans"><a href="javascript:;"><i class="fa fa-slideshare"></i>KMeans</a></li>
+              </ul>
+            </li>
+            <li>
+              <a href="javascript:;" class="nochild"><i class="fa fa-ge"></i>统计</a>
+              <ul type="analyze" class="animenu__nav__child">
+                <li method="visual-any"><a href="javascript:"><i class="fa fa-bar-chart"></i>可视统计分析</a></li>
+                <li id="statistic-nav"><a href="javascript:"><i class="fa fa-pie-chart"></i>图属性统计</a></li>
+                <li id="analyze-nav"><a href="javascript:"><i class="fa fa-retweet"></i>路径分析</a></li>
+                <li method="listAnalyze"><a href="javascript:"><i class="fa fa-table"></i>列表分析</a></li>
+<!--                <li>-->
+<!--                  <a href="javascript:;"><i class="fa fa-table"></i>实体类型设置<i class="fa fa-sort-desc"></i></a>-->
+<!--                  <ul class="list1" type="analyze">-->
+<!--                    <li class="layoutitem" method="typeMapSet">点类型设置</li>-->
+<!--                    <li class="layoutitem" method="lineTypeMapSet">边类型设置</li>-->
+<!--                  </ul>-->
+<!--                </li>-->
+                
+              </ul>
+            </li>
+            <li>
+              <a href="javascript:;"><i class="fa fa-globe"></i>过滤</a>
+              <ul type="view" class="animenu__nav__child">
+                <li id="rank-nav"><a href="javascript:;"><i class="fa fa-sort-amount-asc"></i>实体排序</a></li>
+                <li id="filter-nav"><a href="javascript:;"><i class="fa fa-filter"></i>实体过滤</a></li>
+<!--                <li id="three-sence"><a href="javascript:;"><i class="fa fa-codepen"></i>三维视图</a></li>-->
+              </ul>
+            </li>
+
+            <li id='demo-nav'>
+              <a href="javascript:;" class="nochild"><i class="fa fa-photo"></i>数据</a>
+            </li>
+                   
+          </ul>
+        </nav>
+
+        <div class="nav-right-bar">
+            <ul>
+                <li class="searchli">
+                    <div class="input-group input-group-sm">
+                      <input id="seachKey" type="text" class="form-control searchinput" style="background-color:white;color:black" placeholder="输入名称查找">
+                      <span class="input-group-btn">
+                          <a id="searchBtn" class="btn btn-primary lg-sm bcolor"style="background-color:white;color:black" ><i class="fa fa-search"></i></a>
+                      </span>
+                    </div>
+                </li>
+                <li><a id="fullscreen" href="javascript:;" isfull="false" title="全屏"><i class="fa fa-arrows-alt"></i></a></li>
+                <li><a id="definedSetBtn" href="javascript:;" title="自定义设置"><i class="fa fa-gear"></i></a></li>
+            </ul>
+        </div>
+
+        <div class="navbox">
+          <div class="navbox-tiles">
+            <a href="../network/index.html" class="tile" target="_blank">
+                <div class="icon"><i class="fa fa-group"></i></div><span class="title">关系网络分析</span>
+            </a>
+<!--            <a href="../3d/graph3d.html" class="tile" target="_blank">-->
+<!--                <div class="icon"><i class="fa fa-joomla"></i></div><span class="title">三维网络场景</span>-->
+<!--            </a>-->
+<!--            <a href="../../bigscreen/index.html" class="tile" target="_blank">-->
+<!--                <div class="icon"><i class="fa fa-dashboard"></i></div><span class="title">自定义大屏图表</span>-->
+<!--            </a>-->
+            <a href="../../university/index.html" class="tile" target="_blank">
+                <div class="icon"><i class="fa fa-globe"></i></div><span class="title">高校可视图谱</span>
+            </a>
+            <a href="../../knowlege/index.html" class="tile" target="_blank">
+                <div class="icon"><i class="fa fa-book"></i></div><span class="title">知识图谱查询</span>
+            </a>
+<!--            <a href="../dev-doc/index.html" class="tile" target="_blank">-->
+<!--                <div class="icon"><i class="fa fa-leanpub"></i></div><span class="title">开发手册</span>-->
+<!--            </a>-->
+          </div>
+          <div class="bottom-bar"><a id="closeTopNavBtn" href="javascript:;"><i class="fa fa-angle-double-up"></i></a></div>
+        </div>
+    </div>
+
+    <div id="graph-panel-wrapper" class="vis-network" style="position:relative;width:100%;height:calc(100% - 40px);background-color:rgba(17, 37, 58,0.3);">
+        <!-- <canvas id="graph-panel"></canvas> -->
+    </div>
+
+    {# 左边栏   #}
+    <div class="left-toolbar">
+        <ul id="left-tool-btns">
+            <li type="zoom" method="zoomOut" title="放大"><i class="fa fa-plus-circle"></i></li>
+            <li type="zoom" method="zoomIn" title="缩小"><i class="fa fa-minus-circle"></i></li>
+            <li type="zoom" method="zoom1" title="1:1"><i class="fa fa-arrows-h"></i></li>
+            <li type="zoom" method="zoom11" title="居中" class="end"><i class="fa fa-support"></i></li>
+            <li type="coordi" method="zoomOut" title="坐标放大"><i class="fa fa-search-plus"></i></li>
+            <li type="coordi" method="zoomIn" title="坐标缩小"><i class="fa fa-search-minus"></i></li>
+            <li type="coordi" method="east" title="顺时针旋转"><i class="fa  fa-undo"></i></li>
+            <li type="coordi" method="west" title="逆时针旋转" class="end"><i class="fa fa-repeat"></i></li>
+            <li type="mode" method="normal" title="正常模式" class="active"><i class="fa fa-mouse-pointer"></i></li>
+            <li type="mode" method="select" title="框选模式"><i class="fa fa-crop"></i></li>
+            <li type="mode" method="drag" title="拖拽模式" class="end"><i class="fa fa-arrows"></i></li>
+            <li type="label" method="show" title="节点标签"><i class="fa fa-text-width"></i></li>
+            <li type="warptext" method="wrapText" title="节点包裹文字" class="end"><i class="fa fa-creative-commons"></i></li>
+            
+            <li type="edit" method="addNode" title="添加一个节点" ><i class="fa fa-plus-square"></i></li>
+        </ul>
+    </div>
+
+    {# 底部栏  背景 点 边 直线 点形状   #}
+    <div class="bottom-toolbar">
+        <ul id="bottom-tools-bar">
+            <li type="eyeview" title="缩略图" attr="0"><i class="fa fa-eye-slash"></i></li>
+            <li id="bg-style" class="btn-group dropup btnwrap">
+                <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+                    <i class="fa fa-photo"></i>
+                    <span id="bg-name">背景</span> 
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li class="bgType" type="default"><a href="javascript:;">黑色</a></li>
+                    <li class="bgType" type="white"><a href="javascript:;">白色</a></li>
+                    <li class="bgType" type="bg1"><a href="javascript:;">背景图一</a></li>
+                </ul>
+            </li>
+            <li class="btn-group dropup btnwrap">
+                <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+                    <i class="fa fa-bullseye"></i>&nbsp;点 
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li method="allSelect"><a href="javascript:;">全选</a></li>
+                    <li method="rebackSel"><a href="javascript:;">反选</a></li>
+                    <li method="showNodes"><a href="javascript:;">显示全部</a></li>
+                    <li method="showSelNode"><a href="javascript:;">显示选中</a></li>
+                    <li method="hideSelNode"><a href="javascript:;">隐藏选中</a></li>
+                    <li method="hideIsolatedNodes"><a href="javascript:;">隐藏孤立点</a></li>
+                </ul>
+            </li>
+            <li class="btn-group dropup btnwrap">
+                <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+                    <i class="fa fa-random"></i>&nbsp;边 
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li method="showLinks"><a href="javascript:;">全部显示</a></li>
+                    <li method="hideLinks"><a href="javascript:;">全部隐藏</a></li>
+                    <li method="directedLine"><a href="javascript:;">显示箭头</a></li>
+                    <li method="undirectedLine"><a href="javascript:;">隐藏箭头</a></li>
+                    <li method="showLineLabel"><a href="javascript:;">显示标签</a></li>
+                    <li method="hideLineLabel"><a href="javascript:;">隐藏标签</a></li>
+                    <li method="Rline"><a href="javascript:;">实线</a></li>
+                    <li method="Vline"><a href="javascript:;">虚线</a></li>
+                </ul>
+            </li>
+            <li id="line-type" class="btn-group dropup btnwrap">
+                <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+                    <i class="fa fa-long-arrow-up"></i>
+                    <span id="line-name">直线</span>
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li class="lineType" type="direct"><a href="javascript:;">直线</a></li>
+                    <li class="lineType" type="curver"><a href="javascript:;">曲线</a></li>
+                    <li class="lineType" type="vlink"><a href="javascript:;">纵向折线</a></li>
+                    <li class="lineType" type="hlink"><a href="javascript:;">横向折线</a></li>
+                    <li class="lineType" type="vbezier"><a href="javascript:;">纵向曲线</a></li>
+                    <li class="lineType" type="hbezier"><a href="javascript:;">横向曲线</a></li>
+                    <li class="lineType" type="bezier"><a href="javascript:;">贝塞尔曲线</a></li>
+                </ul>
+            </li>
+            <li id="entity-shape" class="btn-group dropup btnwrap">
+                <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+                    <i class="fa fa-pinterest"></i>
+                    <span id="bg-name">点形状</span> 
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li class="shape" type="circle"><a href="javascript:;">圆形</a></li>
+                    <li class="shape" type="rect"><a href="javascript:;">正方形</a></li>
+                    <li class="shape" type="ellipse"><a href="javascript:;">椭圆</a></li>
+                    <li class="shape" type="triangle"><a href="javascript:;">三角形</a></li>
+                    <li class="shape" type="star"><a href="javascript:;">五角星</a></li>
+                    <li class="shape" type="polygon"><a href="javascript:;">六边形</a></li>
+                    <li class="shape" type="text"><a href="javascript:;">文字</a></li>
+                </ul>
+            </li>
+        </ul>
+        <div class="right-panel">
+            <span>节点：<label id="nodeNum">0</label></span>
+            <span>边：<label id="linkNum">0</label></span>
+        </div>
+    </div>
+
+    <div id="layoutWrapper" class="sideMenuContainer">
+      <div class="left-bar-header">
+          <span class="title">布局设置</span>
+          <a class="slideCloseBtn" href="javascript:;"><i class="fa fa-chevron-right"></i></a>
+      </div>
+      <div class="left-bar-content">
+        <div class="tab-desc"><span id="layout-name">算法参数设置</span></div>
+        <div class="algorims-setter">
+            <table id="layout-params" class="small-table">
+            </table>
+        </div>
+        <div style="margin-top:5px;">
+            <input id="layout-type" type="hidden" />
+            <button id="runLayotBtn" type="button" class="btn btn-sm btn-primary" style="width:145px;">
+                <i class="fa fa-play"></i>运行布局
+            </button>
+            <button id="layoutParam-reset" type="button" class="btn btn-sm btn-primary" style="width:90px;">
+                <i class="fa fa-gear"></i>应用
+            </button>
+        </div>
+        <p style="color: #aba9a9;margin:10px 5px;">
+          注:处于运行中的的布局算法，调整参数后，可点击【应用】后生效
+        </p>
+      </div>
+    </div>
+
+    <div id="definedSetterWrapper" class="sideMenuContainer">
+      <div class="left-bar-header">
+          <span class="title">自定义设置</span>
+          <a class="slideCloseBtn" href="javascript:;"><i class="fa fa-chevron-right"></i></a>
+      </div>
+      <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+        <div class="panel panel-default">
+          <div class="panel-heading" role="tab" id="ds_head1">
+            <h4 class="panel-title">
+              <a role="button" data-toggle="collapse" data-parent="#accordion" href="index.html#nodeStyleSetter" aria-expanded="true" aria-controls="nodeStyleSetter">点样式设置</a>
+            </h4>
+          </div>
+          <div id="nodeStyleSetter" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="ds_head1" >
+            <div class="panel-body">
+                <table class="small-table">
+                  <tr>
+                    <td>点大小</td>
+                    <td><div id="nodeSize" class="slider-wrap"></div></td>
+                  </tr>
+                  <tr>
+                    <td>度缩放比例</td>
+                    <td><div id="nodeRange" class="slider-wrap"></div></td>
+                  </tr>
+                  <tr>
+                    <td>点颜色</td>
+                    <td>
+                      <div class="input-group colorpicker-component colorpicker-element">
+                        <input id="nodeColor" type="text" class="form-control input-sm" value="#1f6ce9">
+                        <span class="input-group-addon col1"></span>
+                        <a tarele="nodeColor" method="setNodeColor" class="col2" href="javascript:;" title="应用">
+                            <i class="fa fa-pencil-square-o"></i>
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>标签显示</td>
+                    <td>
+                      <div class="input-group colorpicker-element">
+                          <input id="nodelabelDegreen" type="number" class="form-control input-sm" value="5" placeholder="度大于n时显示"/>
+                          <a tarele="nodelabelDegreen" method="setNodeLabelWithDegree" class="col2" href="javascript:;" title="应用">
+                              <i class="fa fa-pencil-square-o"></i>
+                          </a>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>标签颜色</td>
+                    <td>
+                      <div class="input-group colorpicker-component colorpicker-element">
+                        <input id="labelColor" type="text" class="form-control input-sm" value="#edece7">
+                        <span class="input-group-addon col1"></span>
+                          <a tarele="labelColor" method="setLabelColor" class="col2" href="javascript:;" title="应用">
+                              <i class="fa fa-pencil-square-o"></i>
+                          </a>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>字体大小</td>
+                    <td>
+                      <div class="input-group colorpicker-element">
+                        <input id="nodefont" type="number" class="form-control input-sm" value="20"/>
+                        <a tarele="nodefont" method="setNodeFont" class="col2" href="javascript:;" title="应用">
+                            <i class="fa fa-pencil-square-o"></i>
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>标签位置</td>
+                    <td>
+                       <div class="input-group colorpicker-element">
+                          <select id="textPosition" class="small-selector">
+                             <option value="Middle_Center">居中</option>
+                             <option value="Bottom_Center">底部</option>
+                             <option value="Top_Center">顶部</option>
+                             <option value="Middle_Right">右边</option>
+                             <option value="Middle_Left">左边</option>
+                           </select>
+                           <a tarele="textPosition" method="setTextPosition" class="col2" href="javascript:;" title="应用">
+                              <i class="fa fa-pencil-square-o"></i>
+                          </a>
+                        </div>
+                    </td>
+                  </tr>
+                </table>
+            </div>
+          </div>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-heading" role="tab" id="ds_head2">
+            <h4 class="panel-title">
+            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="index.html#linkStyleSetter" aria-expanded="false" aria-controls="linkStyleSetter">边样式设置</a>
+            </h4>
+          </div>
+          <div id="linkStyleSetter" class="panel-collapse collapse" role="tabpanel" aria-labelledby="ds_head2" aria-expanded="false">
+            <div class="panel-body">
+                <table class="small-table">
+                    <tr>
+                      <td>边透明度</td>
+                      <td><div id="linkAlpha" class="slider-wrap"></div></td>
+                    </tr>
+                    <tr>
+                      <td>权重比例</td>
+                      <td><div id="linkRange" class="slider-wrap"></div></td>
+                    </tr>
+                    <tr>
+                      <td>连线颜色</td>
+                      <td>
+                         <select id="linkColorType" class="small-selector">
+                           <option value="0">继承源点颜色</option>
+                           <option value="1">继承终点颜色</option>
+                           <option value="3">双向颜色</option>
+                           <option value="2">自定义颜色</option>
+                         </select>
+
+                        <div id="linkColorWrapper" class="input-group colorpicker-component colorpicker-element" style="margin-top:5px;display:none;">
+                            <input id="linkColor" type="text" class="form-control input-sm" value="#737373">
+                            <span class="input-group-addon col1"></span>
+                            <a tarele="linkColor" method="setLinkColor" class="col2" href="javascript:;" title="应用">
+                                <i class="fa fa-pencil-square-o"></i>
+                            </a>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>连线箭头</td>
+                      <td>
+                        <select id="linkArrowShow" class="small-selector">
+                           <option value="true">显示</option>
+                           <option value="false">不显示</option>
+                         </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>连线标签</td>
+                      <td>
+                        <select id="linkLabelShow" class="small-selector">
+                           <option value="true">显示</option>
+                           <option value="false" selected="true">不显示</option>
+                         </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>标签颜色</td>
+                      <td>
+                        <div class="input-group colorpicker-component colorpicker-element">
+                          <input id="linkLabelColor" type="text" class="form-control input-sm" value="#edece7">
+                          <span class="input-group-addon col1"></span>
+                            <a tarele="linkLabelColor" method="setLinkLabelColor" class="col2" href="javascript:;" title="应用">
+                                <i class="fa fa-pencil-square-o"></i>
+                            </a>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>字体大小</td>
+                      <td>
+                        <div class="input-group colorpicker-element">
+                          <input id="linkfont" type="number" class="form-control input-sm" value="15"/>
+                          <a tarele="linkfont" method="setLinkFont" class="col2" href="javascript:;" title="应用">
+                              <i class="fa fa-pencil-square-o"></i>
+                          </a>
+                        </div>
+                      </td>
+                    </tr>
+                </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="nodeInfoWrapper" class="sideMenuContainer">
+      <div class="left-bar-header">
+          <span class="title">节点信息</span>
+          <a class="slideCloseBtn" href="javascript:;"><i class="fa fa-chevron-right"></i></a>
+      </div>
+      <div class="left-bar-content">
+        <div class="node-info">
+            <div class="item_div">
+                <label>名称：</label>
+                <input id="node-label" type="text" value="" class="small-input"/>
+            </div>
+            <div class="item_div">
+                <label>大小：</label>
+                <input id="node-size" type="number" value="10" class="small-input" />
+            </div>
+            <div class="item_div">
+                <label>缩放：</label>
+                <input id="node-scale" type="number" value="1" min="1" max="10" class="small-input" />
+            </div>
+            <div class="item_div">
+                <label>颜色：</label>
+                <div class="input-group colorpicker-component colorpicker-element" style="display:inline-flex;width:175px;">
+                    <input id="node-color" type="text" class="form-control input-sm" value="#1f6ce9">
+                    <span class="input-group-addon col1"></span>
+                </div>   
+            </div>
+            <div class="item_div">
+                <label>图标：</label>
+                <div class="input-group colorpicker-element" style="display:inline-flex;width:175px;">
+                    <input id="node-image" type="text" class="form-control input-sm" value="" placeholder="图标链接路径,可空">
+                </div>   
+            </div>
+            <div class="item_div">
+                <label>形状：</label>
+                <select id="node-shape" class="small-input">
+                  <option value="circle">圆形</option>
+                  <option value="rect">正方形</option>
+                  <option value="ellipse">椭圆</option>
+                  <option value="triangle">三角形</option>
+                  <option value="star">五角星</option>
+                  <option value="polygon">六边形</option>
+                  <option value="text">文字</option>
+                </select>     
+            </div>
+            <div class="item_div">
+                <label>标签：</label>
+                <select id="show-label" class="small-input">
+                  <option value="true">显示</option>
+                  <option value="false">不显示</option>
+                </select>     
+            </div>
+            <div class="node-info-app-btns">
+              <a id="nodeInfoRestBtn" class="btn btn-primary btn-sm">应用</a>
+            </div>
+        </div>
+        <div class="node-relate-wraper">
+            <div class="node-attr-type">目标点&nbsp;(<span id="outdegree-num">0</span>)</div>
+            <div id="outdegree-nodes" class="node-relate-other"></div>
+            <div class="node-attr-type">来源点&nbsp;(<span id="indegree-num">0</span>)</div>
+            <div id="indegree-nodes" class="node-relate-other"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="edgeInfoWrapper" class="sideMenuContainer">
+      <div class="left-bar-header">
+          <span class="title">边样式设置</span>
+          <a class="slideCloseBtn" href="javascript:;"><i class="fa fa-chevron-right"></i></a>
+      </div>
+      <div class="left-bar-content">
+        <div class="node-info">
+            <div class="item_div">
+                <label>标签：</label>
+                <input id="edge-label" type="text" value="" class="small-input"/>
+            </div>
+            <div class="item_div">
+                <label>宽度：</label>
+                <input id="edge-width" type="number" value="3" class="small-input" />
+            </div>
+            <div class="item_div">
+                <label>颜色：</label>
+                <div class="input-group colorpicker-component colorpicker-element" style="display:inline-flex;width:175px;">
+                    <input id="edge-color" type="text" class="form-control input-sm" value="#1f6ce9">
+                    <span class="input-group-addon col1"></span>
+                </div>   
+            </div>
+            <div class="item_div">
+                <label>类型：</label>
+                <select id="edge-type" class="small-input">
+                  <option value="direct">直线</option>
+                  <option value="curver">曲线</option>
+                </select>     
+            </div>
+            <div class="item_div">
+                <label>样式：</label>
+                <select id="edge-style" class="small-input">
+                  <option value="0">实线</option>
+                  <option value="8,5">虚线</option>
+                </select>     
+            </div>
+            <div class="node-info-app-btns">
+              <a id="edgeStyleRestBtn" class="btn btn-primary btn-sm">应用</a>
+            </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="statisticWrapper" class="sideMenuContainer">
+      <div class="left-bar-header">
+          <span class="title">图统计信息</span>
+          <a class="slideCloseBtn" href="javascript:;"><i class="fa fa-chevron-right"></i></a>
+      </div>
+      <div id="statistic-table" class="left-bar-content">
+          <table class="small-table">
+            <tr>
+              <td>点</td>
+              <td><div id="g-nodes" class="slider-wrap">0</div></td>
+            </tr>
+            <tr>
+              <td>边</td>
+              <td><div id="g-links" class="slider-wrap">0</div></td>
+            </tr>
+            <tr>
+              <td>图密度</td>
+              <td><div id="g-density" class="slider-wrap">--</div></td>
+            </tr>
+            <!-- <tr>
+              <td>图直径</td>
+              <td><div id="g-darmity" class="slider-wrap">--</div></td>
+            </tr> -->
+            <tr>
+              <td>平均度</td>
+              <td><div id="g-avgdegree" class="slider-wrap">--</div></td>
+            </tr>
+            <tr>
+              <td>平均入度</td>
+              <td><div id="g-avgindegree" class="slider-wrap">--</div></td>
+            </tr>
+            <tr>
+              <td>平均出度</td>
+              <td><div id="g-avgoutdegree" class="slider-wrap">--</div></td>
+            </tr>
+            <tr>
+              <td>平均加权度</td>
+              <td><div id="g-avgwdegree" class="slider-wrap">--</div></td>
+            </tr>
+          </table>
+      </div>
+    </div>
+
+    <div id="nodeRankWrapper" class="sideMenuContainer">
+      <div class="left-bar-header">
+          <span class="title">排序设置</span>
+          <a class="slideCloseBtn" href="javascript:;"><i class="fa fa-chevron-right"></i></a>
+      </div>
+      <div class="panel-group" id="rank_accordion" role="tablist" aria-multiselectable="true">
+        <div class="panel panel-default">
+          <div class="panel-heading" role="tab" id="rank-head1">
+            <h4 class="panel-title">
+              <a role="button" data-toggle="collapse" data-parent="#rank_accordion" href="index.html#nodeColorRank" aria-expanded="true" aria-controls="nodeColorRank">点颜色排序</a>
+            </h4>
+          </div>
+          <div id="nodeColorRank" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="rank-head1" >
+            <div class="panel-body">
+                <table class="small-table">
+                <tr>
+                  <td>属性</td>
+                  <td>
+                      <select id="node-prop-type" class="small-selector">
+                        <option value="degree" selected="true">度</option>
+                        <option value="outdegree">出度</option>
+                        <option value="indegree">入度</option>
+                      </select>  
+                  </td>
+                </tr>
+                <tr>
+                  <td>起始色</td>
+                  <td>
+                      <div class="input-group colorpicker-component colorpicker-element">
+                        <input id="node-color-start" type="text" class="form-control input-sm" value="#fad5d5">
+                        <span class="input-group-addon col1"></span>
+                      </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>终止色</td>
+                  <td>
+                      <div class="input-group colorpicker-component colorpicker-element">
+                        <input id="node-color-end" type="text" class="form-control input-sm" value="#f40928">
+                        <span class="input-group-addon col1"></span>
+                      </div>
+                  </td>
+                </tr>
+              </table>
+              <div class="node-info-app-btns">
+                <a id="node-color-rank-apply" class="btn btn-primary btn-sm">应用</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-heading" role="tab" id="rank-head2">
+            <h4 class="panel-title">
+            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#rank_accordion" href="index.html#nodeSizeRank" aria-expanded="false" aria-controls="nodeSizeRank">点大小排序</a>
+            </h4>
+          </div>
+          <div id="nodeSizeRank" class="panel-collapse collapse" role="tabpanel" aria-labelledby="rank-head2" aria-expanded="false">
+            <div class="panel-body">
+                <table class="small-table">
+                  <tr>
+                    <td>属性</td>
+                    <td>
+                        <select id="node-size-type" class="small-selector">
+                          <option value="degree" selected="true">度</option>
+                          <option value="outdegree">出度</option>
+                          <option value="indegree">入度</option>
+                        </select>  
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>最小值</td>
+                    <td>
+                        <input id="node-size-min" type="range" min="1" max="50" step="1" value="10">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>最大值</td>
+                    <td>
+                        <input id="node-size-max" type="range" min="10" max="100" step="1" value="50">
+                    </td>
+                  </tr>
+                </table>
+                <div class="node-info-app-btns">
+                  <a id="node-size-rank-apply" class="btn btn-primary btn-sm">应用</a>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="analyzeWrapper" class="sideMenuContainer">
+      <div class="left-bar-header">
+          <span class="title">统计分析设置设置</span>
+          <a class="slideCloseBtn" href="javascript:;"><i class="fa fa-chevron-right"></i></a>
+      </div>
+      <div class="panel-group" id="anz-accordion" role="tablist" aria-multiselectable="true">
+        <div class="panel panel-default">
+          <div class="panel-heading" role="tab" id="any-head1">
+            <h4 class="panel-title">
+              <a role="button" data-toggle="collapse" data-parent="#anz-accordion" href="index.html#node-nlayer" aria-expanded="true" aria-controls="node-nlayer">查找N层关系</a>
+            </h4>
+          </div>
+          <div id="node-nlayer" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="any-head1" >
+            <div class="panel-body">
+                <table class="small-table">
+                  <tr>
+                    <td>点标签</td>
+                    <td>
+                        <div class="input-group colorpicker-element">
+                          <input id="l-node" type="text" class="form-control input-sm" value="">
+                        </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>层数</td>
+                    <td>
+                        <select id="l-layer" class="small-selector">
+                          <option value="1" selected="true">1</option>
+                          <option value="2">2</option>
+                          <option value="3">3</option>
+                          <option value="4">4</option>
+                          <option value="5">5</option>
+                          <option value="6">6</option>
+                        </select> 
+                    </td>
+                  </tr>
+              </table>
+              <div class="node-info-app-btns">
+                <a id="find-node-nlevel" class="btn btn-primary btn-sm">分析</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-heading" role="tab" id="any-head2">
+            <h4 class="panel-title">
+            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#anz-accordion" href="index.html#pathanalyze" aria-expanded="false" aria-controls="pathanalyze">路径分析</a>
+            </h4>
+          </div>
+          <div id="pathanalyze" class="panel-collapse collapse" role="tabpanel" aria-labelledby="any-head2" aria-expanded="false">
+            <div class="panel-body">
+                <table class="small-table">
+                    <tr>
+                      <td>起始点</td>
+                      <td>
+                          <div class="input-group colorpicker-element">
+                            <input id="p-s-node" type="text" class="form-control input-sm" value="">
+                          </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>目标点</td>
+                      <td>
+                          <div class="input-group colorpicker-element">
+                            <input id="p-t-node" type="text" class="form-control input-sm" value="">
+                          </div>
+                      </td>
+                    </tr>
+                </table>
+                <div class="node-info-app-btns">
+                  <a id="path-analyze-btn" class="btn btn-primary btn-sm">分析</a>
+                </div>
+            </div>
+          </div>
+        </div>
+<!--        <div class="panel panel-default">-->
+<!--          <div class="panel-heading" role="tab" id="any-head3">-->
+<!--            <h4 class="panel-title">-->
+<!--            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#anz-accordion" href="index.html#spathanalyze" aria-expanded="false" aria-controls="spathanalyze">最短路径分析</a>-->
+<!--            </h4>-->
+<!--          </div>-->
+<!--          <div id="spathanalyze" class="panel-collapse collapse" role="tabpanel" aria-labelledby="any-head3" aria-expanded="false">-->
+<!--            <div class="panel-body">-->
+<!--                <table class="small-table">-->
+<!--                    <tr>-->
+<!--                      <td>起始点</td>-->
+<!--                      <td>-->
+<!--                          <div class="input-group colorpicker-element">-->
+<!--                            <input id="sp-s-node" type="text" class="form-control input-sm" value="">-->
+<!--                          </div>-->
+<!--                      </td>-->
+<!--                    </tr>-->
+<!--                    <tr>-->
+<!--                      <td>目标点</td>-->
+<!--                      <td>-->
+<!--                          <div class="input-group colorpicker-element">-->
+<!--                            <input id="sp-t-node" type="text" class="form-control input-sm" value="">-->
+<!--                          </div>-->
+<!--                      </td>-->
+<!--                    </tr>-->
+<!--                </table>-->
+<!--                <div class="node-info-app-btns">-->
+<!--                  <a id="spath-analyze-btn" class="btn btn-primary btn-sm">分析</a>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+        <div class="panel panel-default">
+   <div class="panel-heading" role="tab" id="any-head3">
+   <h4 class="panel-title">
+               <a class="collapsed" role="button" data-toggle="collapse" data-parent="#anz-accordion" href="index.html#spathanalyze" aria-expanded="false" aria-controls="spathanalyze"style="background-color:white;color:black;box-shadow: none">简单关系分析</a>
+            </h4>
+ </div>
+              <div id="spathanalyze" class="panel-collapse collapse" role="tabpanel" aria-labelledby="any-head3" aria-expanded="false"style="background-color:white">
+                  <div class="panel-body"style="background-color:white">
+                      <table class="small-table" style="background-color:white">
+                          <tr>
+                              <td>First problem relation type </td>
+                              <td>
+                                  <div class="input-group colorpicker-element"style="background-color:white">
+                                      <input id="sp-s-node" type="text" style="background-color:white;color:black" class="form-control input-sm" value="">
+                                  </div>
+                              </td>
+                          </tr>
+                          <tr>
+                              <td>Second problem relation type</td>
+                              <td>
+                                  <div class="input-group colorpicker-element"style="background-color:white">
+                                      <input id="sp-t-node" type="text" style="background-color:white;color:black" class="form-control input-sm" value="">
+                                  </div>
+                              </td>
+                          </tr>
+                          <tr>
+                              <td>Problem type description</td>
+                              <td>
+                                  <div class="input-group colorpicker-element"style="background-color:white">
+                                      <input id="sp-t-node4" type="text" style="background-color:white;color:black" class="form-control input-sm" value="">
+                                  </div>
+                              </td>
+                          </tr>
+                          <tr>
+                              <td>First target relation type</td>
+                              <td>
+                                  <div class="input-group colorpicker-element"style="background-color:white">
+                                      <input id="sp-s-node2" type="text" style="background-color:white;color:black" class="form-control input-sm" value="">
+                                  </div>
+                              </td>
+                          </tr>
+                          <tr>
+                              <td>Second target relation type</td>
+                              <td>
+                                  <div class="input-group colorpicker-element"style="background-color:white">
+                                      <input id="sp-s-node3" type="text" style="background-color:white;color:black" class="form-control input-sm" value="">
+                                  </div>
+                              </td>
+                          </tr>
+<!--                          <tr>-->
+<!--                              <td>节点4</td>-->
+<!--                              <td>-->
+<!--                                  <div class="input-group colorpicker-element">-->
+<!--                                      <input id="sp-t-node2" type="text" class="form-control input-sm" value="">-->
+<!--                                  </div>-->
+<!--                              </td>-->
+<!--                          </tr>-->
+                      </table>
+                      <div class="node-info-app-btns"style="background-color:white">
+                          <a id="spath-analyze-btn" class="btn btn-primary btn-sm"style="background-color:white;color:black">分析</a>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+
+    <div id="filterWrapper" class="sideMenuContainer">
+      <div class="left-bar-header">
+          <span class="title">过滤设置</span>
+          <a class="slideCloseBtn" href="javascript:;"><i class="fa fa-chevron-right"></i></a>
+      </div>
+      <div class="panel-group" id="filter-accordion" role="tablist" aria-multiselectable="true">
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="filter-head1">
+              <h4 class="panel-title">
+              <a role="button" data-toggle="collapse" data-parent="#filter-accordion1" href="index.html#node-filter" aria-expanded="true" aria-controls="node-filter">点过滤条件</a>
+              </h4>
+            </div>
+            <div id="node-filter" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="filter-head1" aria-expanded="true">
+              <div class="panel-body">
+                  <table class="small-table">
+                      <tr>
+                        <td>
+                            <select id="node-filter-type" class="small-selector" style="width:60px;">
+                              <option value="degree" selected="true">度</option>
+                              <option value="outdegree">出度</option>
+                              <option value="indegree">入度</option>
+                            </select> 
+                        </td>
+                        <td>
+                          <select id="node-filter-con" class="small-selector" style="width:60px;">
+                              <option value="1" selected="true">大于</option>
+                              <option value="2">等于</option>
+                              <option value="3">小于</option>
+                          </select>
+                        </td>
+                        <td>
+                            <div class="input-group colorpicker-element" style="width:60px;">
+                              <input id="node-filter-value" type="number" class="form-control input-sm" value="1">
+                            </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>实体类型</td>
+                        <td colspan="2">
+                          <select id="node-types-sel" class="small-selector">
+                              <option value="1" selected="true">全部</option>
+                          </select>
+                        </td>
+                      </tr>
+                  </table>
+                  <div class="node-info-app-btns">
+                    <a id="node-filter-btn" class="btn btn-primary btn-sm">过滤</a>
+                  </div>
+              </div>
+            </div>
+        </div>
+         <div class="panel panel-default">
+             <div class="panel-heading"role="tab" id="filer-head3">
+                 <h4 class="panel-title">
+                     <a role="button" data-toggle="collapse" data-parent="filter-accordion1" href="index.html#node-size-filter"aria-expanded="true" aria-controls="node-size-filter">节点层次过滤</a>
+                 </h4>
+             </div>
+             <div id="node-size-filter" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="filer-head3" aria-expanded="true">
+                 <div class="panel-body">
+                     <table class="small-table">
+                         <tr>
+                             <td>
+                                 <select id="node2-filter-type" class="small-selector" style="width:60px;">
+                                     <option value="degree" selected="true"> 节点层次</option>
+<!--                                     <option value="outdegree">出度</option>-->
+<!--                                     <option value="indegree">入度</option>-->
+                                 </select>
+                             </td>
+                             <td>
+                                 <select id="node2-filter-con" class="small-selector" style="width:60px;">
+                                     <option value="1" selected="true">大于</option>
+                                     <option value="2">等于</option>
+                                     <option value="3">小于</option>
+                                 </select>
+                             </td>
+                             <td>
+                                 <div class="input-group colorpicker-element" style="width:60px;">
+                                     <input id="node2-filter-value" type="number" class="form-control input-sm" value="1">
+                                 </div>
+                             </td>
+                         </tr>
+                         <tr>
+                             <td>实体类型</td>
+                             <td colspan="2">
+                                 <select id="node2-types-sel" class="small-selector">
+                                     <option value="1" selected="true">全部</option>
+                                 </select>
+                             </td>
+                         </tr>
+                     </table>
+                     <div class="node-info-app-btns">
+                         <a id="node2-filter-btn" class="btn btn-primary btn-sm">过滤</a>
+                     </div>
+                 </div>
+             </div>
+         </div>
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="filter-head2">
+              <h4 class="panel-title">
+              <a role="button" data-toggle="collapse" data-parent="#filter-accordion1" href="index.html#link-filter" aria-expanded="true" aria-controls="link-filter">边过滤条件</a>
+              </h4>
+            </div>
+            <div id="link-filter" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="filter-head2" aria-expanded="true">
+              <div class="panel-body">
+                  <table class="small-table">
+                      <tr>
+                        <td>边权重</td>
+                        <td>
+                          <select id="link-filter-con" class="small-selector" style="width:60px;">
+                              <option value="1" selected="true">大于</option>
+                              <option value="2">等于</option>
+                              <option value="3">小于</option>
+                          </select>
+                        </td>
+                        <td>
+                            <div class="input-group colorpicker-element" style="width:60px;">
+                              <input id="link-filter-value" type="number" class="form-control input-sm" value="1">
+                            </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>关系类型&nbsp;</td>
+                        <td colspan="2">
+                          <select id="link-types-sel" class="small-selector">
+                              <option value="1" selected="true">全部</option>
+                          </select>
+                        </td>
+                      </tr>
+                  </table>
+                  <div class="node-info-app-btns">
+                    <a id="link-filter-btn" class="btn btn-primary btn-sm">过滤</a>
+                  </div>
+              </div>
+            </div>
+        </div>
+       </div>
+
+    </div>
+
+    <div id="historyWrapper" class="sideMenuContainer">
+      <div class="left-bar-header">
+          <span class="title">历史记录</span>
+          <a class="slideCloseBtn" href="javascript:;"><i class="fa fa-chevron-right"></i></a>
+      </div>
+      <div id="history-list" class="left-bar-content"></div>
+    </div>
+
+    <div class="noadaptertip">您的屏幕太小，我需要一个大点的“舞台”！</div>
+    <div id="edge-style-trrigle" style="display:none;"></div>
+    <div id="loading">
+        <div id="loading-center">
+            <div id="loading-center-absolute">
+                <div class="object" id="object_four"></div>
+                <div class="object" id="object_three"></div>
+                <div class="object" id="object_two"></div>
+                <div class="object" id="object_one"></div>
+            </div>
+        </div>
+    </div>
+</body>
+
+
+<script type="text/javascript">
+  window.onload=function()
+  {document.onkeydown=function()
+  {var e=window.event||arguments[0];if(e.keyCode==123){return false}if((e.ctrlKey)&&(e.keyCode==67)){return false}if((e.ctrlKey)&&(e.keyCode==65)){return false}if((e.ctrlKey)&&(e.keyCode==85)){return false}if((e.ctrlKey)&&(e.shiftKey)&&(e.keyCode==67)){return false}if((e.ctrlKey)&&(e.shiftKey)&&(e.keyCode==65)){return false}};
+  document.oncontextmenu=function(){return false};document.onmousedown=function(e){if(event.button==2||event.button==3){return false}}}
+</script>
+
+<script type="text/javascript" src="{% static 'foodKG/scripts/jquery-3.3.1.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'foodKG/scripts/bootstrap/bootstrap.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'foodKG/scripts/bootstrap/colorpicker/js/bootstrap-colorpicker.js' %}"></script>
+<script type="text/javascript" src="{% static 'foodKG/scripts/sideToggle/velocity.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'foodKG/scripts/layer/layer.js' %}"></script>
+
+<!--<script type="text/javascript" src="{% static 'foodKG/common/visgraph-2.0.0.min.js' %}"></script>-->
+<script type="text/javascript" src="{% static 'foodKG/common/visgraph.js' %}"></script>
+<script src="{% static 'foodKG/vip/assets/libs/layui/layui.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'foodKG/scripts/require.js' %}"></script>
+<script type="text/javascript" src="{% static 'foodKG/scripts/jsonviewer/jquery.jsonview.js' %}"></script>
+<script type="text/javascript" src="{% static 'foodKG/scripts/sideToggle/sideToggleExtended.js' %}"></script>
+<script type="text/javascript" src="{% static 'foodKG/scripts/slider/r-slider.js' %}"></script>
+<script type="text/javascript">
+    /*function autoResize(){
+       var currWinWidth = window.innerWidth,currWinHeight = window.innerHeight -70;
+       var width = $('#graph-panel-wrapper').width(),height=currWinHeight;
+       var ratio=getRatio(document.getElementById('graph-panel'));
+       $("#graph-panel").attr({width:width*ratio,height:height*ratio})
+                        .css({'width':width,'height':height});
+    }
+    autoResize();
+    window.onresize = autoResize;*/
+</script>
+<script type="text/javascript" src="{% static 'foodKG/js/analyze.js' %}"></script>
+
+
+</html>

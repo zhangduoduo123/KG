@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="zh-cn">
+    <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta charset="UTF-8">
+        <meta name="keywords" content="图,关系分析,图可视化,图数据分析"/>
+        <meta name="description" content="关系数据可视化分析"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+        <title>图说数据</title>
+        <script type="text/javascript" src="{% static 'foodKG/common/baidu.js' %}"></script>
+        <link rel="stylesheet" href="{% static 'foodKG/scripts/bootstrap/bootstrap.min.css' %}">
+        <link rel="stylesheet" href="{% static 'foodKG/style/bootstrap-table.min.css' %}">
+    </head>
+
+    <body>
+        <div style="margin:10px;">
+            <div class="row row-lg" style="margin:0;">
+                <div class="btn-group btn-group-sm" style="margin-left: 15px;">
+                    <button type="button" attr='node' class="btn btn-info switchBtn">点列表</button>
+                    <button type="button" attr='link' class="btn btn-default switchBtn">边列表</button>
+                </div>
+                <div id="node-table-wrap" class="col-sm-12">  
+                    <div class="example-wrap">
+                        <div class="example">
+                            <table id="nodetype-table" data-height="400" data-mobile-responsive="true">
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div id="link-table-wrap" class="col-sm-12" style="display: none;">  
+                    <div class="example-wrap">
+                        <div class="example">
+                            <table id="link-table" data-height="400" data-mobile-responsive="true">
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+
+    <script type="text/javascript" src="{% static 'foodKG/scripts/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'foodKG/scripts/bootstrap/bootstrap.min.js' %}"></script>   {# scripts/bootstrap/bootstrap.min.js?v=3.3.6 #}
+    <script src="{% static 'foodKG/scripts/bootstrap/bootstrap-table/bootstrap-table.min.js' %}"></script>
+    <script src="{% static 'foodKG/scripts/bootstrap/bootstrap-table/locale/bootstrap-table-zh-CN.min.js' %}"></script>
+    <script type="text/javascript">
+        (function(document, window, $) {
+          'use strict';
+          var graphData = {'nodes':[],'links':[]};
+          function initGraphTable(data){
+            var tableHeads =[
+                {field: 'index', title: '序号',width:50,sortable:true},
+                /*{field: 'id', title: 'ID',width:50},*/
+                {field: 'label', title: '标签',width:300,formatter:labelFormatter},
+                {field: 'degree', title: '度',width:50,sortable:true},
+                {field: 'indegree', title: '出度',width:50,sortable:true},
+                {field: 'outdegree', title: '入度',width:50,sortable:true}
+            ];
+            $('#nodetype-table').bootstrapTable('destroy').bootstrapTable({
+              columns:tableHeads,
+              striped: false, 
+              data : data,
+              search: true,
+              pagination: true,
+              showRefresh: false,
+              showToggle: false,
+              showColumns: false,
+              showPaginationSwitch: false,
+              pageSize: 50,
+              //pageList: [10, 25, 50, 100, 200],
+              height: $(window).height() - 50,
+              //iconSize: 'outline',
+              //toolbar: '#exampleTableEventsToolbar',
+              icons: {
+                refresh: 'glyphicon-repeat',
+              }
+            });            
+          }
+
+          function initLinkTable(links){
+            var tableHeads =[
+                {field: 'index', title: '序号',width:50,sortable:true},
+                {field: 'source', title: '源',width:200},
+                {field: 'relate', title: '关系',width:80},
+                {field: 'target', title: '溯',width:200},
+                {field: 'weight', title: '权重',width:50,sortable:true}
+            ];
+            $('#link-table').bootstrapTable('destroy').bootstrapTable({
+              columns:tableHeads,
+              striped: false, 
+              data : links,
+              search: true,
+              pagination: true,
+              showRefresh: false,
+              showToggle: false,
+              showColumns: false,
+              showPaginationSwitch: false,
+              pageSize: 50,
+              //pageList: [10, 25, 50, 100, 200],
+              height: $(window).height() - 50,
+              //iconSize: 'outline',
+              //toolbar: '#exampleTableEventsToolbar',
+              icons: {
+                refresh: 'glyphicon-repeat',
+              }
+            });            
+          }
+
+          var linktableAdd=false;
+          $('.switchBtn').on('click',function(){
+            var attr= $(this).attr('attr');
+            $(this).removeClass('btn-default').addClass('btn-info');
+            $(this).siblings('.btn').removeClass('btn-info').addClass('btn-default');
+            if(attr == 'node'){
+                $('#node-table-wrap').show();
+                $('#link-table-wrap').hide();
+            }else{
+                $('#node-table-wrap').hide();
+                $('#link-table-wrap').show();
+                if(!linktableAdd){
+                    linktableAdd = true;
+                    var links = [];
+
+                    graphData.links.forEach(function(link,i){
+                        links.push({
+                            'index':i+1,
+                            'source':link.source.label,
+                            'relate':link.label||'--',
+                            'target':link.target.label,
+                            'weight':link.weight
+                        });
+                    });
+                    initLinkTable(links);
+                }
+            }
+          });
+          
+          function labelFormatter(value, row, index) {
+              return "<a href='javascript:;' onclick=\"findNode('" +value+ "')\">"+value+"</a>&emsp;";
+          }
+
+          function setGraphData(_graphData){
+             graphData = _graphData;
+             var data = [];
+             graphData.nodes.forEach(function(node,i){
+                data.push({
+                    'index':i+1,
+                    'id':node.uniquId,
+                    'label':node.label,
+                    'degree':(node.inLinks||[]).length+(node.outLinks||[]).length,
+                    'indegree':(node.inLinks||[]).length,
+                    'outdegree':(node.outLinks||[]).length
+                });
+             });
+             initGraphTable(data);
+          }
+
+          function findNode(label){
+              window.parent.setAndFindNode(label);
+          }
+
+          document.findNode = findNode;
+          window.setGraphData = setGraphData;
+          
+        })(document, window, jQuery);
+
+    </script>
+</html>

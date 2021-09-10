@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="zh-cn">
+    <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta charset="UTF-8">
+        <meta name="keywords" content="图,关系分析,图可视化,图数据分析"/>
+        <meta name="description" content="关系数据可视化分析"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>图说数据-可视统计分析</title>
+        <script type="text/javascript" src="{% static 'foodKG/common/baidu.js' %}"></script>
+        <style type="text/css">
+            /*.wrapper{position:absolute;left:10px;bottom:10px;right:10px;top:10px;}*/
+            .wrapper > .title{text-align:center;font-size:20px;margin: 0px auto 10px auto;color: #434bb9;}
+            .wrapper .left-side{float:left;width:150px;height:100%;border:1px solid #dcdbdb;}
+            .wrapper .main-content{width:calc(100% - 154px);margin-left:154px;border:1px solid #dcdbdb;}
+            .visarea{width:100%;min-height:500px;}
+            .wrapper ul{padding:5px;margin:0 0 10px 0;background:#efefef;}
+            .wrapper ul li{list-style:none;height:25px;font-size:14px;text-align:center;}
+            .wrapper ul li>a{text-decoration:none;color:#999;;}
+            .wrapper ul li>a:hover{color:#19a338;}
+        </style>
+    </head>
+
+    <body>
+    	<div class="wrapper">
+            <div class="left-side">
+                <ul>
+                    <li><a href="javascript:genreateWordCloud('degree');">按度生成词云图</a></li>
+                    <li><a href="javascript:genreateWordCloud('outdegree');">按出度生成图</a></li>
+                    <li><a href="javascript:genreateWordCloud('indegree');">按入度生成图</a></li>
+                </ul>
+                <ul>
+                    <li><a href="javascript:genreatBar('degree');">生成度分布直方图</a></li>
+                    <li><a href="javascript:genreatBar('outdegree');">出度分布</a></li>
+                    <li><a href="javascript:genreatBar('indegree');">入度分布</a></li>
+                </ul> 
+                <ul>
+                    <li><a href="javascript:genreatScater();">生成度分布散点图</a></li>
+                </ul>                 
+            </div>
+            <div class="main-content">
+                <div id="visual-area" class="visarea" ></div>
+            </div>
+        </div>
+    </body>
+    <script type="text/javascript" src="{% static 'foodKG/scripts/jquery-3.3.1.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'foodKG/scripts/echarts/echarts.js' %}"></script>
+    <script type="text/javascript" src="{% static 'visual/js/visualAnalyze.js' %}"></script>
+
+</html>
