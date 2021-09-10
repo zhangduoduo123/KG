@@ -1,8 +1,12 @@
+import csv
+
 from django.shortcuts import render
 
 # Create your views here.
 # -*- coding:utf-8 -*-
 import re
+
+import pandas as pd
 import torch
 import torch.nn.functional as F
 from django.shortcuts import render
@@ -12,8 +16,8 @@ from util.pre_load import segment, neo4jconn
 def test(request):
 	context = {'ctx':''}
 	if request.method == "POST":
-		question = request.POST.get('question')
-		#question = request.GET['question']
+		question = request.POST.get('q')
+		#question = request.GET['q']
 		#question = question[:300]
 		# 移除空格
 		question = question.strip()
@@ -184,7 +188,17 @@ def test(request):
 			if word == '':
 				ret_dict = []
 
-			ret_dict = neo4jconn.get_entity_info('恩诺沙星')
+			ret_dict = neo4jconn.get_entity_info('2,3,5,6-四氯苯胺')
+			# with open('F:\kg和数据\KG\static\\test.csv', 'w', newline='',encoding='utf-8-sig') as csvfile:
+			# 	writer = csv.writer(csvfile)
+			# 	for row in ret_dict:
+			#		writer.writerow(row)
+			df = pd.DataFrame(ret_dict)
+			# index=False表示不写入索引
+			df.to_csv("F:\kg和数据\KG\static\\t.csv", index=False, header=None, encoding='utf-8-sig')
+
+
+
 
 
 

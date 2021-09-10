@@ -102,12 +102,11 @@
               </li>
 
             <li id='demo-nav'>
-              <form action="/index2/" method="post">
-          {% csrf_token %}
-<input type="text" placeholder="请输入你的问题..." name="q">
-<button type="submit"></button>
-</form>
-                </form>
+                 <form action="/index2/" method="post">
+                 {% csrf_token %}
+                 <input type="text" placeholder="请输入你的问题..." name="q">
+                 <button type="submit">确定</button>
+                  </form>
                   </li>
           </ul>
         </nav>
