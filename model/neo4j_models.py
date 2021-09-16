@@ -20,34 +20,15 @@ class Neo4j_Handle():
         '''
 
 		data1 = self.graph.run(
-			"MATCH(p: veterinary)-[r2: 残留药物]-(m:food_event)-[r1: 所属地区]-(n:area) "
+			"MATCH(p: med)-[r2: 残留药物]-(m:food_event)-[r1: 所属地区]-(n) "
 			"WHERE  p.name = $name "
-			"WITH  p, m, n, r1, r2 match(m: food_event)-[r3: 抽检食物]-(q:food) "
-			"RETURN r1, r2,r3", name=name).data()
-
-		# data2 = self.graph.run(
-		# 	"match (source)-[rel]-(target)  where target.name = $name " +
-		# 	"return rel ", name=name).data()
+			"WITH  p, m, n, r1, r2 match(t:res)-[r4:残留量]-(m: food_event)-[r3: 抽检食物]-(q:food) "
+			"RETURN r1,r2,r3,r4", name=name).data()
 
 		ls = []
 		json_list = []
-		b = ['r1', 'r2', 'r3']
-		# data1.extend(data2)
-		# for an in data1:
-		# 	result = {}
-		# 	rel = an['rel']
-		# 	relation_type = list(rel.types())[0]
-		# 	start_name = rel.start_node['name']
-		# 	end_name = rel.end_node['name']
-		# 	result["source"] = start_name
-		# 	result['rel_type'] = relation_type
-		# 	result['target'] = end_name
-		# 	json_list.append(result)
-		#
-		# return json_list
-
+		b = ['r1', 'r2', 'r3','r4']
 		for an in data1:
-
 			for i in b:
 				result = {}
 				rel = an[i]
@@ -65,6 +46,39 @@ class Neo4j_Handle():
 
 		new_list_t = [ls[i:i + 3] for i in range(0, len(ls), 3)]
 		return new_list_t
+
+	def get_tox_info(self, name) -> list:
+			'''
+	        查找该entity所有的直接关系
+	        :param name:
+	        :return:
+	        '''
+
+			data1 = self.graph.run(
+				"MATCH  (s:器官或状态)-[r5]-(v:影响)-[r6]-(p:med)-[r2:残留药物]-(m:food_event)-[r1:所属地区]-(n:area)"
+				"WHERE  p.name = $name and n.name = '吉林' "
+				"WITH s,v,p,m,n,r1,r2,r5,r6 match (t:res)-[r4]-(m:food_event)-[r3:抽检食物]-(q:food)"
+				"RETURN r1,r2,r3,r4,r5,r6", name=name).data()
+			ls = []
+			json_list = []
+			b = ['r1','r2','r3','r4','r5','r6',]
+			for an in data1:
+				for i in b:
+					result = {}
+					rel = an[i]
+					relation_type = list(rel.types())[0]
+					start_name = rel.start_node['name']
+					end_name = rel.end_node['name']
+					result["source"] = start_name
+					result['rel_type'] = relation_type
+					result['target'] = end_name
+					ls.append(start_name)
+					ls.append(relation_type)
+					ls.append(end_name)
+					json_list.append(result)
+
+			new_list_t = [ls[i:i + 3] for i in range(0, len(ls), 3)]
+			return new_list_t
 
 	# 四.问答
 	# 1 问题3 某时间-某地区-各种类食物中兽药抽检频次

@@ -99,15 +99,14 @@
             <li id='demo-nav'>
               <a href="javascript:;" class="nochild"><i class="fa fa-photo"></i>数据</a>
             </li>
-              </li>
-
-            <li id='demo-nav'>
-                 <form action="/index2/" method="post">
-                 {% csrf_token %}
-                 <input type="text" placeholder="请输入你的问题..." name="q">
-                 <button type="submit">确定</button>
-                  </form>
-                  </li>
+               <li id='demo-nav'>
+                <form action="/index2/" method="post">
+              {% csrf_token %}
+		  <input type="text" placeholder="请输入你的问题..." name="q">
+		  <button type="submit">确定</button>
+		  </form>
+            </li>
+                   
           </ul>
         </nav>
 
@@ -153,6 +152,7 @@
 
     <div id="graph-panel-wrapper" class="vis-network" style="position:relative;width:100%;height:calc(100% - 40px);background-color:rgba(17, 37, 58,0.3);">
         <!-- <canvas id="graph-panel"></canvas> -->
+        {{ flag1 }}
     </div>
 
     {# 左边栏   #}
@@ -1070,7 +1070,7 @@
     autoResize();
     window.onresize = autoResize;*/
 </script>
-<script type="text/javascript" src="{% static 'foodKG/js/analyze.js' %}"></script>
+<script type="text/javascript" src="{% static 'foodKG/js/analyze1.js' %}"></script>
 
 
 </html>

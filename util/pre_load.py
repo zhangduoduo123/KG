@@ -50,7 +50,7 @@ def init_model():
 
 # 初始化pyhanlp
 def init_hanlp():
-    segment = HanLP.newSegment().enableNameRecognize(True).enableOrganizationRecognize(True).enablePlaceRecognize(True).enableCustomDictionaryForcing(True)
+    segment = HanLP.newSegment()
     return segment
 
 # 初始化neo4j
