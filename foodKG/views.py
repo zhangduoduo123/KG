@@ -741,18 +741,21 @@ def test(request):
 			if word == '':
 				ret_dict = []
 			ret_dict = neo4jconn.get_tox_info(med)
+			if len(ret_dict) == 0:
+				ret_dict = neo4jconn.get_tox_info_nong(med)
+
 
 
 		df = pd.DataFrame(ret_dict)
-		df.to_csv("F:\kg和数据\KG\static\\t.csv", index=False, header=None, encoding='utf-8-sig')
+		df.to_csv("static/t.csv", index=False, header=None, encoding='utf-8-sig')
 
 		#开始（lvqing）
 		resul = []
 		resulguanxi = []
-		with open("F:\kg和数据\KG\static\\t.csv", encoding='utf-8') as f:
+		with open("static/t.csv", encoding='utf-8') as f:
 			reader = csv.reader(f)
 			heads = [row[0] for row in reader]
-		with open("F:\kg和数据\KG\static\\t.csv", encoding='utf-8') as f1:
+		with open("static/t.csv", encoding='utf-8') as f1:
 			reader = csv.reader(f1)
 			tails = [row[2] for row in reader]
 		for i in range(len(heads)):
@@ -794,7 +797,7 @@ def test(request):
 				guanxitu['links'][k]['target'] = str(String.index(i))
 				k = k + 1
 
-		with open("F:\kg和数据\KG\static\\t.csv", encoding='utf-8') as f:
+		with open("static/t.csv", encoding='utf-8') as f:
 			reader = csv.reader(f)
 			heads = [row[1] for row in reader]
 		for i in range(len(heads)):
@@ -838,7 +841,7 @@ def test(request):
 		wei = "}});"
 
 		zhengti = tou + zhengti + wei
-		with open("F:/kg和数据/KG/static/foodKG/graphdata/geshi1.js", "w", encoding='utf-8') as f:
+		with open("static/foodKG/graphdata/geshi1.js", "w", encoding='utf-8') as f:
 			f.write(zhengti)
     #结束（lvqing）
 

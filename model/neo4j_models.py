@@ -80,6 +80,44 @@ class Neo4j_Handle():
 			new_list_t = [ls[i:i + 3] for i in range(0, len(ls), 3)]
 			return new_list_t
 
+	def get_tox_info_nong(self, name) -> list:
+			'''
+	        查找该entity所有的直接关系
+	        :param name:
+	        :return:
+	        '''
+
+			data1 = self.graph.run(
+				"MATCH  (s:临床表现)-[r5]-(p:med)-[r2:残留药物]-(m:food_event)-[r1:所属地区]-(n)"
+				"WHERE  p.name = $name "
+				"WITH s,r5,p,m,n,r1,r2 match (t:res)-[r4:残留量]-(m:food_event)-[r3:抽检食物]-(q:food)"
+				"RETURN r1,r2,r3,r4,r5", name=name).data()
+			ls = []
+			json_list = []
+			b = ['r1','r2','r3','r4','r5',]
+			for an in data1:
+				for i in b:
+					result = {}
+					rel = an[i]
+					relation_type = list(rel.types())[0]
+					start_name = rel.start_node['name']
+					end_name = rel.end_node['name']
+					result["source"] = start_name
+					result['rel_type'] = relation_type
+					result['target'] = end_name
+					ls.append(start_name)
+					ls.append(relation_type)
+					ls.append(end_name)
+					json_list.append(result)
+
+			new_list_t = [ls[i:i + 3] for i in range(0, len(ls), 3)]
+			return new_list_t
+
+
+
+
+
+
 	# 四.问答
 	# 1 问题3 某时间-某地区-各种类食物中兽药抽检频次
 	def veterinary_rate(self, name,start,end):
