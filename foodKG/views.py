@@ -3,7 +3,7 @@ import csv
 import jieba
 import jieba.analyse
 import jieba.posseg
-jieba.load_userdict("F:\kg和数据\KG\\foodKG\med.txt")
+jieba.load_userdict("static\med.txt")
 from django.shortcuts import render
 from collections import defaultdict
 import json
@@ -581,6 +581,8 @@ def test(request):
 			[r"^.\w+兽药残留水平", ],
 			[r"^.\w+的抽检数据", r"^.\w+的抽检信息"],
 			[r"^.\w+的毒性数据", r"^.\w+的毒性信息",r"^.\w+的毒理数据", r"^.\w+的毒理信息"],
+			[r"^.\w+关于食品安全的地方法规有哪些",],
+			[r"^.\w+关于食品安全的行业法规有哪些", ],
 		]
 
 		pos = -1
@@ -597,122 +599,15 @@ def test(request):
 				break
 
 		if classfication_num == 0:
-			word = ''
-			cnt_time = 0
-			cnt_type = 0
-			for term in word_nature:
-				if str(term.nature) == 'ns':
-					city = term.word
-				elif str(term.nature) == 'm':
-					if cnt_time == 0:
-						start = term.word
-					elif cnt_time == 1:
-						end = term.word
-					cnt_time = cnt_time + 1
-				elif str(term.nature) == 'n':
-					if cnt_type == 0:
-						type = term.word
-					cnt_type = cnt_time + 1
-
-			if word == '':
-				ret_dict = []
-			ret_dict = neo4jconn.veterinary_rate(city, start, end)
+			pass
 		elif classfication_num == 1:
-			word = ''
-			cnt_time = 0
-			cnt_type = 0
-			for term in word_nature:
-				if str(term.nature) == 'ns':
-					city = term.word
-				elif str(term.nature) == 'm':
-					if cnt_time == 0:
-						start = term.word
-					elif cnt_time == 1:
-						end = term.word
-					cnt_time = cnt_time + 1
-				elif str(term.nature) == 'n':
-					if cnt_type == 0:
-						type = term.word
-					cnt_type = cnt_time + 1
-			if word == '':
-				ret_dict = []
-
-			ret_dict = neo4jconn.veterinary_kind(city, start, end)
+			pass
 		elif classfication_num == 2:
-			word = ''
-			cnt_time = 0
-			cnt_type = 0
-			city=''
-			start = ''
-			end = ''
-			type = ''
-
-			for term in word_nature:
-				if str(term.nature) == 'ns':
-					city = term.word
-				elif str(term.nature) == 'm':
-					if cnt_time == 0:
-						start = term.word
-					elif cnt_time == 1:
-						end = term.word
-					cnt_time = cnt_time + 1
-				elif str(term.nature) == 'n':
-					if cnt_type == 0:
-						type = term.word
-					cnt_type = cnt_time + 1
-			if city == '':
-				pass
-			if start == '':
-				start = '2013-1-1'
-			if end == '':
-				end = '2022-1-1'
-			if type == '':
-				pass
-			if word == '':
-				ret_dict = []
-			ret_dict = neo4jconn.veterinary_tox2(city, start, end,type)
+			pass
 		elif classfication_num == 3:
-			word = ''
-			cnt_time = 0
-			cnt_type = 0
-			for term in word_nature:
-				if str(term.nature) == 'ns':
-					city = term.word
-				elif str(term.nature) == 'm':
-					if cnt_time == 0:
-						start = term.word
-					elif cnt_time == 1:
-						end = term.word
-					cnt_time = cnt_time + 1
-				elif str(term.nature) == 'n':
-					if cnt_type == 0:
-						type = term.word
-					cnt_type = cnt_time + 1
-			if word == '':
-				ret_dict = []
-
-			ret_dict = neo4jconn.veterinary_tox(city, start, end,type)
+			pass
 		elif classfication_num == 4:
-			word = ''
-			cnt_time = 0
-			cnt_type = 0
-			for term in word_nature:
-				if str(term.nature) == 'ns':
-					city = term.word
-				elif str(term.nature) == 'm':
-					if cnt_time == 0:
-						start = term.word
-					elif cnt_time == 1:
-						end = term.word
-					cnt_time = cnt_time + 1
-				elif str(term.nature) == 'n':
-					if cnt_type == 0:
-						type = term.word
-					cnt_type = cnt_time + 1
-			if word == '':
-				ret_dict = []
-
-			ret_dict = neo4jconn.veterinary_res(city, start, end,type)
+			pass
 		elif classfication_num == 5:
 			word = ''
 			med =''
@@ -730,22 +625,36 @@ def test(request):
 			ret_dict = neo4jconn.get_entity_info(med)
 		elif classfication_num == 6:
 			word = ''
-			med =''
-			cnt_time = 0
-			cnt_type = 0
-			for term in word_nature:
-				if cnt_time == 0:
-					if str(term[1]) == 'x' or str(term[1]) == 'n':
-						med = term[0]
-						cnt_time += 1
+			med = word_nature[0][0]
 			if word == '':
 				ret_dict = []
 			ret_dict = neo4jconn.get_tox_info(med)
 			if len(ret_dict) == 0:
 				ret_dict = neo4jconn.get_tox_info_nong(med)
+		elif classfication_num == 7:
+				word = ''
+				med = word_nature[0][0]
+				if word == '':
+					ret_dict = []
+				#类型 地区 产业
+				ret_dict = neo4jconn.get_law('地方法规',med,'食品安全')
+		elif classfication_num == 8:
+			word = ''
+			med = word_nature[0][0]
+
+			if word == '':
+				ret_dict = []
+			# 类型 地区 产业
+			ret_dict = neo4jconn.get_law('行业法规', med, '食品安全')
 
 
 
+		# 去重解决名称重复的问题
+		temp = []
+		for i in ret_dict:
+			if i not in temp:
+				temp.append(i)
+		ret_dict = temp
 		df = pd.DataFrame(ret_dict)
 		df.to_csv("static/t.csv", index=False, header=None, encoding='utf-8-sig')
 
@@ -776,7 +685,7 @@ def test(request):
 			d['label'] = i
 			d['size'] = 66
 			d['scale'] = random.uniform(1.6, 2.0)
-			d['color'] = "rgb(1, 255, 136)"
+			d['color'] = "rgb(85,133,205)"
 			if (len(guanxitu['nodes']) == 0):
 				guanxitu['nodes'].append(d)
 			if (len(guanxitu['nodes']) != 0):

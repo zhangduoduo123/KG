@@ -19,11 +19,21 @@ class Neo4j_Handle():
         :return:
         '''
 
+		# data1 = self.graph.run(
+		# 	"MATCH(p: med)-[r2: 残留药物]-(m:food_event)-[r1: 所属地区]-(n:area) "
+		# 	"WHERE  p.name = $name and n.name='福建' "
+		# 	"WITH  p, m, n, r1, r2 match(t:res)-[r4:残留量]-(m: food_event)-[r3: 抽检食物]-(q:food) "
+		# 	"RETURN r1,r2,r3,r4", name=name).data()
 		data1 = self.graph.run(
-			"MATCH(p: med)-[r2: 残留药物]-(m:food_event)-[r1: 所属地区]-(n) "
+			"MATCH(p: med)-[r2: 残留药物]-(m:food_event)-[r1: 所属地区]-(n:area) "
 			"WHERE  p.name = $name "
-			"WITH  p, m, n, r1, r2 match(t:res)-[r4:残留量]-(m: food_event)-[r3: 抽检食物]-(q:food) "
+			"WITH  p, m, n, r1, r2 match(t:res)-[r4:残留量]-(m: food_event)-[r3: 抽检食物]-(q:food{foodtype:'水产'}) "
 			"RETURN r1,r2,r3,r4", name=name).data()
+		# data1 = self.graph.run(
+		# 	"MATCH  (p:med)-[r2:残留药物]-(m:food_event)-[r1:所属地区]-(n:area) "
+		# 	"WHERE  p.name = $name "
+		# 	"WITH p,m,n,r1,r2 match (t:res)-[r4:残留量]-(m:food_event)-[r3:抽检食物]-(q:food) "
+		# 	"RETURN r1,r2,r3,r4", name=name).data()
 
 		ls = []
 		json_list = []
@@ -56,12 +66,12 @@ class Neo4j_Handle():
 
 			data1 = self.graph.run(
 				"MATCH  (s:器官或状态)-[r5]-(v:影响)-[r6]-(p:med)-[r2:残留药物]-(m:food_event)-[r1:所属地区]-(n:area)"
-				"WHERE  p.name = $name and n.name = '吉林' "
-				"WITH s,v,p,m,n,r1,r2,r5,r6 match (t:res)-[r4]-(m:food_event)-[r3:抽检食物]-(q:food)"
+				"WHERE  p.name = $name "
+				"WITH s,v,p,m,n,r1,r2,r5,r6 match (t:food)-[r4]-(m:food_event)-[r3]-(w:res)"
 				"RETURN r1,r2,r3,r4,r5,r6", name=name).data()
 			ls = []
 			json_list = []
-			b = ['r1','r2','r3','r4','r5','r6',]
+			b = ['r1','r2','r3','r4','r5','r6']
 			for an in data1:
 				for i in b:
 					result = {}
@@ -92,8 +102,10 @@ class Neo4j_Handle():
 				"WHERE  p.name = $name "
 				"WITH s,r5,p,m,n,r1,r2 match (t:res)-[r4:残留量]-(m:food_event)-[r3:抽检食物]-(q:food)"
 				"RETURN r1,r2,r3,r4,r5", name=name).data()
+
 			ls = []
 			json_list = []
+
 			b = ['r1','r2','r3','r4','r5',]
 			for an in data1:
 				for i in b:
@@ -109,6 +121,42 @@ class Neo4j_Handle():
 					ls.append(relation_type)
 					ls.append(end_name)
 					json_list.append(result)
+
+			new_list_t = [ls[i:i + 3] for i in range(0, len(ls), 3)]
+			return new_list_t
+	def get_law(self, name,area,indus) -> list:
+			'''
+	        查找该entity所有的直接关系
+	        :param name:
+	        :return:
+	        '''
+
+			data1 = self.graph.run(
+				"MATCH (p:law_type)-[r2]-(m:law)-[r1]-(n:area) "
+				"WHERE p.name = $name and n.name=$area "
+				"WITH p,m,n,r1,r2 match (t:industry{name:$indus})-[r4]-(m:law)-[r3]-(q:org) "
+				"RETURN r1", name=name,area=area,indus=indus).data()
+
+			ls = []
+			b = ['r1']
+			for an in data1:
+				for i in b:
+					result = {}
+					rel = an[i]
+					relation_type = list(rel.types())[0]
+					start_name = rel.start_node['name']
+
+					if rel.start_node['detail']:
+						ls.append(start_name)
+						ls.append('法律内容')
+						ls.append(rel.start_node['detail'])
+
+					end_name = rel.end_node['name']
+					ls.append(start_name)
+					ls.append(relation_type)
+					ls.append(end_name)
+
+
 
 			new_list_t = [ls[i:i + 3] for i in range(0, len(ls), 3)]
 			return new_list_t

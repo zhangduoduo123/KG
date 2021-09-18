@@ -747,8 +747,8 @@ $(function() {
 			"honglou": ["../../static/foodKG/graphdata/honglou"],
 			"xiyouji": ["../../static/foodKG/graphdata/xiyouji"],
 			"shuihu": ["../../static/foodKG/graphdata/shuihu"],
-			// "sanguo": ["../graphdata/sanguo"],
-			"sanguo": ["../../static/foodKG/graphdata/sanguo"],
+			// "geshi1": ["../graphdata/geshi1"],
+			"geshi1": ["../../static/foodKG/graphdata/geshi1"],
 			"guzhishusong": ["../../static/foodKG/graphdata/guzhishusong"],
 			"gaoxueya": ["../../static/foodKG/graphdata/gaoxueya"],
 			"guanxinbing": ["../../static/foodKG/graphdata/guanxinbing"],
@@ -773,8 +773,8 @@ $(function() {
 		marginLeft: -200,
 		marginTop: -20
 	});
-	drawDemoData("sanguo");
-	// drawDemoData('sanguo');
+	drawDemoData("geshi1");
+	// drawDemoData('geshi1');
 	initSlider()
 });
 
