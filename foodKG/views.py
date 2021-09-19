@@ -661,10 +661,10 @@ def test(request):
 		#开始（lvqing）
 		resul = []
 		resulguanxi = []
-		with open("static/t.csv", encoding='utf-8') as f:
+		with open("static/t.csv", encoding='utf-8-sig') as f:
 			reader = csv.reader(f)
 			heads = [row[0] for row in reader]
-		with open("static/t.csv", encoding='utf-8') as f1:
+		with open("static/t.csv", encoding='utf-8-sig') as f1:
 			reader = csv.reader(f1)
 			tails = [row[2] for row in reader]
 		for i in range(len(heads)):
@@ -706,7 +706,7 @@ def test(request):
 				guanxitu['links'][k]['target'] = str(String.index(i))
 				k = k + 1
 
-		with open("static/t.csv", encoding='utf-8') as f:
+		with open("static/t.csv", encoding='utf-8-sig') as f:
 			reader = csv.reader(f)
 			heads = [row[1] for row in reader]
 		for i in range(len(heads)):
