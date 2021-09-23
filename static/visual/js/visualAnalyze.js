@@ -1,5 +1,7 @@
 var graphDataCache=null;
-
+var localObj = window.location;
+var contextPath = localObj.pathname.split("/")[1];
+var basePath = localObj.protocol+"//"+localObj.host+"/"+contextPath;
 autoSize();
 function autoSize(){
    var height = window.innerHeight -25;
@@ -8,6 +10,7 @@ function autoSize(){
 }
 
 function setGraphData(graphData){
+     debugger
      graphDataCache=graphData;
      genreateWordCloud('degree');
 }
@@ -15,15 +18,20 @@ window.setGraphData = setGraphData;
 
 require.config({
     paths: {
-        echarts: '../../foodKG/scripts/echarts/echarts'
+        // F:\kg和数据\KG\static\foodKG\scripts\echarts\chart\wordCloud.js
+        echarts: '{% static "foodKG/scripts/echarts" %}',
     }
 });
 
 function genreateWordCloud(type){
     require(
         [
-            '../../foodKG/scripts/echarts/echarts',
-            '../../foodKG/scripts/echarts/chart/wordCloud'
+            // '../../foodKG/scripts/echarts/echarts',
+            // 'F:/kg和数据/KG/static/foodKG/scripts/echarts/chart/wordCloud.js'
+             '../../foodKG/scripts/echarts/chart/wordCloud'
+           // 'echarts',
+           //  'echarts/chart/wordCloud',
+
         ],
         function (ec) {  
             var myChart = ec.init(document.getElementById('visual-area'));
@@ -39,10 +47,14 @@ function genreateWordCloud(type){
 function genreatBar(type){
     require(
         [
-            '../../foodKG/scripts/echarts/echarts',
-            '../../foodKG/scripts/echarts/chart/bar',
-            '../../foodKG/scripts/echarts/chart/line',
-            '../../foodKG/scripts/echarts/chart/scatter'
+            // '../../foodKG/scripts/echarts/echarts',
+            // '../../foodKG/scripts/echarts/chart/bar',
+            // '../../foodKG/scripts/echarts/chart/line',
+            // '../../foodKG/scripts/echarts/chart/scatter',
+             'echarts',
+            'echarts/chart/bar',
+            'echarts/chart/line',
+            'echarts/chart/scatter',
         ],
         function (ec) {  
             var myChart = ec.init(document.getElementById('visual-area'));
@@ -58,8 +70,8 @@ function genreatBar(type){
 function genreatScater(){
     require(
         [
-            '../../foodKG/scripts/echarts/echarts',
-            '../../foodKG/scripts/echarts/chart/scatter'
+            'echarts',
+            'echarts/chart/scatter'
         ],
         function (ec) {  
             var myChart = ec.init(document.getElementById('visual-area'));

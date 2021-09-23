@@ -239,6 +239,7 @@ var BoxRightMenu = {
 };
 
 function showNodeInfo(node) {//TODO 设置节点信息
+	debugger
 	if (!node) {
 		return false
 	}
@@ -544,8 +545,10 @@ $(function() {
 	});
 
 	$('#runLayotBtn').on('click', function() {  //todo 快速弹性布局模型
+		debugger
 		var btn = $(this);
 		var layoutType = $('#layout-type').val();
+		debugger
 		if (!layoutType) {
 			return false
 		}
@@ -563,6 +566,8 @@ $(function() {
 			stopLayout()
 		}
 	});
+
+
 
 	$('#labelshowBtn').on('click', function() {
 		var btn = $(this).find('.fa');
@@ -707,13 +712,14 @@ $(function() {
 			$('#g-avgwdegree').text(statistic['avgWeightDegree'])  //设置或返回被选元素的文本内容
 		}
 	});
-	
+
 	require.config({
 		paths: {
 			"nongyao":["../../static/foodKG/graphdata/nongyao"],
 			"shouyao":["../../static/foodKG/graphdata/shouyao"],
 			"tianjiaji":["../../static/foodKG/graphdata/tianjiaji"],
-
+			"law":["../../static/foodKG/graphdata/law"],
+			"food_anquan":["../../static/foodKG/graphdata/food_anquan"],
 
 			"first":["../../static/foodKG/graphdata/first"],
 			"second":["../../static/foodKG/graphdata/second"],
@@ -747,8 +753,8 @@ $(function() {
 			"honglou": ["../../static/foodKG/graphdata/honglou"],
 			"xiyouji": ["../../static/foodKG/graphdata/xiyouji"],
 			"shuihu": ["../../static/foodKG/graphdata/shuihu"],
-			// "geshi1": ["../graphdata/geshi1"],
-			"geshi1": ["../../static/foodKG/graphdata/geshi1"],
+			// "sanguo": ["../graphdata/sanguo"],
+			"sanguo": ["../../static/foodKG/graphdata/sanguo"],
 			"guzhishusong": ["../../static/foodKG/graphdata/guzhishusong"],
 			"gaoxueya": ["../../static/foodKG/graphdata/gaoxueya"],
 			"guanxinbing": ["../../static/foodKG/graphdata/guanxinbing"],
@@ -773,9 +779,20 @@ $(function() {
 		marginLeft: -200,
 		marginTop: -20
 	});
+	visGraph.setLabelColor('#edece7')
 	drawDemoData("geshi1");
-	// drawDemoData('geshi1');
+	visGraph.setLabelColor('#edece7')
+	debugger
+	var layoutType = "fastFR";
+	runLayout(layoutType);
+	setTimeout(()=>{
+	stopLayout();
+	},3000)
+	debugger
+	// drawDemoData('sanguo');
 	initSlider()
+	visGraph.setLabelColor('#edece7')
+
 });
 
 function initSlider() {
@@ -880,6 +897,7 @@ function applyCluster(clusterType) {
 			})
 		} else {
 			var graph = visGraph.getVisibleData();
+			debugger
 			var cluster = new ClusterFactory(graph).createClutser(clusterType);
 			if (cluster) {
 				var clusters = cluster.applay();
@@ -963,7 +981,9 @@ var currentLayout = null,
 	loopName = null;
 
 function runLayout(layoutType) {
+	debugger
 	var _graph = visGraph.getVisibleData();
+	console.log(_graph)
 	currentLayout = new LayoutFactory(_graph, {
 		'apikey': 'dbp'
 	}).createLayout(layoutType);
@@ -973,6 +993,7 @@ function runLayout(layoutType) {
 		$('#layout-params .param').each(function() {   //为每个匹配元素规定要运行的函数
 			config[$(this).attr('name')] = $(this).val()  // attr 是设置属性或者返回属性
 		});
+		console.log(config)
 		currentLayout.resetConfig(config);
 
 		function loop() {
@@ -1009,6 +1030,7 @@ function fileOperate(method) {
 }
 
 function analyzeOperate(type) {
+	debugger
 	if (type == 'typeMapSet') {
 		nodeTypeSetter(visGraph.getTypeMap())
 	} else if (type == 'listAnalyze') {
@@ -1280,34 +1302,17 @@ function initLayoutMenu() {     //todo 初始化布局模型
 		}, {
 			type: 'frDirect',
 			label: '弹簧力学布局'
-		}, {
-			type: 'fruchtermanReingold',
-			label: 'FruchReingold'
-		}, {
-			type: 'spring2',
-			label: 'SpringLayout'
-		}]
-	}, {
-		type: 'kawai',
-		label: '关系网络类',
-		icon: 'fa fa-connectdevelop',
-		childTypes: [{
-			type: 'fr',
-			label: '经典网络布局'
-		}, {
-			type: 'kk',
-			label: '关系路径布局'
 		}
-		// ,
-		// 	{
-		// 	type: 'arf',
-		// 	label: '球面网络布局'
+		// , {
+		// 	type: 'fruchtermanReingold',
+		// 	label: 'FruchReingold'
 		// }, {
-		// 	type: 'gather',
-		// 	label: '群组聚类布局'
+		// 	type: 'spring2',
+		// 	label: 'SpringLayout'
 		// }
 		]
-	}, {
+	}
+	, {
 		type: 'circle',
 		label: '圆形类',
 		icon: 'fa fa-circle-o',
@@ -1331,30 +1336,8 @@ function initLayoutMenu() {     //todo 初始化布局模型
 		// 	label: '球体布局'
 		// }
 		]
-	}, {
-		type: 'tree',
-		label: '树形结构类',
-		icon: 'fa fa-sitemap',
-		childTypes: [{
-			type: 'hubsize',
-			label: '层级布局'
-		}, {
-			type: 'tree',
-			label: '树形布局'
-		}
-		// ,
-		// 	{
-		// 	type: 'topoCircle',
-		// 	label: '雪花布局'
-		// }, {
-		// 	type: 'radiatree',
-		// 	label: '径向布局'
-		// }, {
-		// 	type: 'balloon',
-		// 	label: '圆形树状布局'
-		// }
-		]
-	}, {
+	},
+		 {
 		type: 'other',
 		label: '其他布局',
 		icon: 'fa fa-code-fork',
@@ -1419,6 +1402,7 @@ function nodeTypeSetter(nodeTypeMap) {
 }
 
 function lineTypeSetter(lineTypeMap) {
+	debugger
 	var data = [];
 	for (var lineType in lineTypeMap) {
 		data.push({
@@ -1488,6 +1472,7 @@ function drawDemoData(dataNo, type) {
 }
 
 function loadGraph(gexfFile) {
+	debugger
 	$('#loading').show();
 	$.ajax({
 		url: (document.location.hash.length > 1 ? document.location.hash.substr(1) : gexfFile),
@@ -1532,16 +1517,15 @@ function loadGraph(gexfFile) {
 }
 
 function renderGraph(graphData, icontype) {
-	$('#loading').show();
+	var nodeCount=0;
+
 	var nodeColor = $.trim($('#nodeColor').val());
-	var labelColor = $.trim($('#labelColor').val());
+	var labelColor = '#ebe9e2';
 	var linkColorType = $('#linkColorType').val();
 	var linkColor = $.trim($('#linkColor').val());
-	var nodeCount = graphData.nodes.length;
-	var showlabel = false;
-	if (nodeCount < 200) {
-		showlabel = true
-	}
+	// var nodeCount = graphData.nodes.length;
+	var showlabel = true;
+
 	var config = {
 		'nodeColor': nodeColor,
 		'nodeSize': 20,
@@ -1550,12 +1534,31 @@ function renderGraph(graphData, icontype) {
 		'labelColor': labelColor,
 		'showlabel': showlabel
 	};
-	visGraph.drawData(graphData, config, icontype);
-	visGraph.setZoom('auto');
-	$("#nodeNum").text(nodeCount);
-	$("#linkNum").text(visGraph.links.length);
-	layer.closeAll();
-	$('#loading').hide()
+	if(graphData.nodes==undefined ||graphData.nodes ==""){
+    	nodeCount=0;
+    	$('#loading').hide()
+		$("#nodeNum").text(0);
+		$("#linkNum").text(0);
+		layer.closeAll();
+		$('#noData').show()
+	}else{
+ 		nodeCount = graphData.nodes.length;
+ 		visGraph.drawData(graphData, config, icontype);
+		visGraph.setZoom('auto');
+		$("#nodeNum").text(nodeCount);
+		$("#linkNum").text(visGraph.links.length);
+		layer.closeAll();
+		$('#loading').hide()
+		visGraph.setLabelColor('#edece7')
+		//自动触发弹性布局
+		var layoutType = "fastFR";
+		runLayout(layoutType);
+		setTimeout(()=>{
+		stopLayout();
+		},3000)
+		visGraph.setLabelColor('#edece7')
+	}
+
 }
 
 window.renderGraph = renderGraph;
@@ -1585,6 +1588,13 @@ layui.config({
 		}
 	};
 
+	function fast(){
+		debugger
+		var btn = $("#runLayotBtn");
+		var layoutType = "fastFR";
+		debugger
+				runLayout(layoutType)
+	}
 	function toLogin() {
 		var currentUser = config.getToken();
 		if (currentUser == null || typeof(currentUser) == undefined) {

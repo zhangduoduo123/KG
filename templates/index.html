@@ -62,11 +62,7 @@
             <li>
               <a href="javascript:;"><i class="fa fa-cubes"></i>聚类</a>
               <ul type="cluster" class="animenu__nav__child">
-                <li method="chinesewisper"><a href="javascript:;"><i class="fa fa-slideshare"></i>ChineseWhisper</a></li>
                 <li method="louvain"><a href="javascript:;"><i class="fa fa-slideshare"></i>Louvain</a></li>
-                <li method="weakcommpent"><a href="javascript:;"><i class="fa fa-slideshare"></i>WeakCommpent</a></li>
-                <li method="bicomponet"><a href="javascript:;"><i class="fa fa-slideshare"></i>Bicomponent</a></li>
-                <li method="newman"><a href="javascript:;"><i class="fa fa-slideshare"></i>Newman</a></li>
                 <li method="kmeans"><a href="javascript:;"><i class="fa fa-slideshare"></i>KMeans</a></li>
               </ul>
             </li>
@@ -95,6 +91,16 @@
 <!--                <li id="three-sence"><a href="javascript:;"><i class="fa fa-codepen"></i>三维视图</a></li>-->
               </ul>
             </li>
+               <li>
+              <a href="javascript:;"><i class="fa fa-globe"></i>统计查询</a>
+              <ul type="view" class="animenu__nav__child">
+                 <li>
+              <a  href="/qa"><i class="fa fa-globe"></i>统计查询</a>
+
+            </li>
+              </ul>
+            </li>
+
 
             <li id='demo-nav'>
               <a href="javascript:;" class="nochild"><i class="fa fa-photo"></i>数据</a>
@@ -123,7 +129,7 @@
                     </div>
                 </li>
                 <li><a id="fullscreen" href="javascript:;" isfull="false" title="全屏"><i class="fa fa-arrows-alt"></i></a></li>
-                <li><a id="definedSetBtn" href="javascript:;" title="自定义设置"><i class="fa fa-gear"></i></a></li>
+
             </ul>
         </div>
 
@@ -157,110 +163,10 @@
     </div>
 
     {# 左边栏   #}
-    <div class="left-toolbar">
-        <ul id="left-tool-btns">
-            <li type="zoom" method="zoomOut" title="放大"><i class="fa fa-plus-circle"></i></li>
-            <li type="zoom" method="zoomIn" title="缩小"><i class="fa fa-minus-circle"></i></li>
-            <li type="zoom" method="zoom1" title="1:1"><i class="fa fa-arrows-h"></i></li>
-            <li type="zoom" method="zoom11" title="居中" class="end"><i class="fa fa-support"></i></li>
-            <li type="coordi" method="zoomOut" title="坐标放大"><i class="fa fa-search-plus"></i></li>
-            <li type="coordi" method="zoomIn" title="坐标缩小"><i class="fa fa-search-minus"></i></li>
-            <li type="coordi" method="east" title="顺时针旋转"><i class="fa  fa-undo"></i></li>
-            <li type="coordi" method="west" title="逆时针旋转" class="end"><i class="fa fa-repeat"></i></li>
-            <li type="mode" method="normal" title="正常模式" class="active"><i class="fa fa-mouse-pointer"></i></li>
-            <li type="mode" method="select" title="框选模式"><i class="fa fa-crop"></i></li>
-            <li type="mode" method="drag" title="拖拽模式" class="end"><i class="fa fa-arrows"></i></li>
-            <li type="label" method="show" title="节点标签"><i class="fa fa-text-width"></i></li>
-            <li type="warptext" method="wrapText" title="节点包裹文字" class="end"><i class="fa fa-creative-commons"></i></li>
-            
-            <li type="edit" method="addNode" title="添加一个节点" ><i class="fa fa-plus-square"></i></li>
-        </ul>
-    </div>
+
 
     {# 底部栏  背景 点 边 直线 点形状   #}
-    <div class="bottom-toolbar">
-        <ul id="bottom-tools-bar">
-            <li type="eyeview" title="缩略图" attr="0"><i class="fa fa-eye-slash"></i></li>
-            <li id="bg-style" class="btn-group dropup btnwrap">
-                <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
-                    <i class="fa fa-photo"></i>
-                    <span id="bg-name">背景</span> 
-                    <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" role="menu">
-                    <li class="bgType" type="default"><a href="javascript:;">黑色</a></li>
-                    <li class="bgType" type="white"><a href="javascript:;">白色</a></li>
-                    <li class="bgType" type="bg1"><a href="javascript:;">背景图一</a></li>
-                </ul>
-            </li>
-            <li class="btn-group dropup btnwrap">
-                <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
-                    <i class="fa fa-bullseye"></i>&nbsp;点 
-                    <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" role="menu">
-                    <li method="allSelect"><a href="javascript:;">全选</a></li>
-                    <li method="rebackSel"><a href="javascript:;">反选</a></li>
-                    <li method="showNodes"><a href="javascript:;">显示全部</a></li>
-                    <li method="showSelNode"><a href="javascript:;">显示选中</a></li>
-                    <li method="hideSelNode"><a href="javascript:;">隐藏选中</a></li>
-                    <li method="hideIsolatedNodes"><a href="javascript:;">隐藏孤立点</a></li>
-                </ul>
-            </li>
-            <li class="btn-group dropup btnwrap">
-                <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
-                    <i class="fa fa-random"></i>&nbsp;边 
-                    <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" role="menu">
-                    <li method="showLinks"><a href="javascript:;">全部显示</a></li>
-                    <li method="hideLinks"><a href="javascript:;">全部隐藏</a></li>
-                    <li method="directedLine"><a href="javascript:;">显示箭头</a></li>
-                    <li method="undirectedLine"><a href="javascript:;">隐藏箭头</a></li>
-                    <li method="showLineLabel"><a href="javascript:;">显示标签</a></li>
-                    <li method="hideLineLabel"><a href="javascript:;">隐藏标签</a></li>
-                    <li method="Rline"><a href="javascript:;">实线</a></li>
-                    <li method="Vline"><a href="javascript:;">虚线</a></li>
-                </ul>
-            </li>
-            <li id="line-type" class="btn-group dropup btnwrap">
-                <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
-                    <i class="fa fa-long-arrow-up"></i>
-                    <span id="line-name">直线</span>
-                    <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" role="menu">
-                    <li class="lineType" type="direct"><a href="javascript:;">直线</a></li>
-                    <li class="lineType" type="curver"><a href="javascript:;">曲线</a></li>
-                    <li class="lineType" type="vlink"><a href="javascript:;">纵向折线</a></li>
-                    <li class="lineType" type="hlink"><a href="javascript:;">横向折线</a></li>
-                    <li class="lineType" type="vbezier"><a href="javascript:;">纵向曲线</a></li>
-                    <li class="lineType" type="hbezier"><a href="javascript:;">横向曲线</a></li>
-                    <li class="lineType" type="bezier"><a href="javascript:;">贝塞尔曲线</a></li>
-                </ul>
-            </li>
-            <li id="entity-shape" class="btn-group dropup btnwrap">
-                <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
-                    <i class="fa fa-pinterest"></i>
-                    <span id="bg-name">点形状</span> 
-                    <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" role="menu">
-                    <li class="shape" type="circle"><a href="javascript:;">圆形</a></li>
-                    <li class="shape" type="rect"><a href="javascript:;">正方形</a></li>
-                    <li class="shape" type="ellipse"><a href="javascript:;">椭圆</a></li>
-                    <li class="shape" type="triangle"><a href="javascript:;">三角形</a></li>
-                    <li class="shape" type="star"><a href="javascript:;">五角星</a></li>
-                    <li class="shape" type="polygon"><a href="javascript:;">六边形</a></li>
-                    <li class="shape" type="text"><a href="javascript:;">文字</a></li>
-                </ul>
-            </li>
-        </ul>
-        <div class="right-panel">
-            <span>节点：<label id="nodeNum">0</label></span>
-            <span>边：<label id="linkNum">0</label></span>
-        </div>
-    </div>
+
 
     <div id="layoutWrapper" class="sideMenuContainer">
       <div class="left-bar-header">
@@ -1024,17 +930,16 @@
       <div id="history-list" class="left-bar-content"></div>
     </div>
 
+
+
+
     <div class="noadaptertip">您的屏幕太小，我需要一个大点的“舞台”！</div>
     <div id="edge-style-trrigle" style="display:none;"></div>
-    <div id="loading">
-        <div id="loading-center">
-            <div id="loading-center-absolute">
-                <div class="object" id="object_four"></div>
-                <div class="object" id="object_three"></div>
-                <div class="object" id="object_two"></div>
-                <div class="object" id="object_one"></div>
-            </div>
-        </div>
+    <div >
+
+        {{ flag1 }}
+
+
     </div>
 </body>
 

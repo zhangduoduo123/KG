@@ -239,6 +239,7 @@ var BoxRightMenu = {
 };
 
 function showNodeInfo(node) {//TODO 设置节点信息
+
 	if (!node) {
 		return false
 	}
@@ -544,8 +545,10 @@ $(function() {
 	});
 
 	$('#runLayotBtn').on('click', function() {  //todo 快速弹性布局模型
+
 		var btn = $(this);
 		var layoutType = $('#layout-type').val();
+
 		if (!layoutType) {
 			return false
 		}
@@ -636,6 +639,7 @@ $(function() {
 		if (value.length == 0) {
 			return
 		}
+		debugger
 		if (method == 'setNodeLabelWithDegree') {
 			visGraph.setNodeLabelWithDegree(parseInt(value))
 		} else if (method == 'setNodeColor') {
@@ -713,8 +717,8 @@ $(function() {
 			"nongyao":["../../static/foodKG/graphdata/nongyao"],
 			"shouyao":["../../static/foodKG/graphdata/shouyao"],
 			"tianjiaji":["../../static/foodKG/graphdata/tianjiaji"],
-
-
+			"law":["../../static/foodKG/graphdata/law"],
+			"food_anquan":["../../static/foodKG/graphdata/food_anquan"],
 			"first":["../../static/foodKG/graphdata/first"],
 			"second":["../../static/foodKG/graphdata/second"],
 			"third":["../../static/foodKG/graphdata/third"],
@@ -725,7 +729,6 @@ $(function() {
 			"eighth":["../../static/foodKG/graphdata/eighth"],
 			"ninth":["../../static/foodKG/graphdata/ninth"],
 			"tenth":["../../static/foodKG/graphdata/tenth"],
-
 			"tree": ["../../static/foodKG/graphdata/tree"],
 			"data1": ["../../static/foodKG/graphdata/data1"],
 			"data2": ["../../static/foodKG/graphdata/data2"],
@@ -773,9 +776,19 @@ $(function() {
 		marginLeft: -200,
 		marginTop: -20
 	});
+	debugger
+	visGraph.setLabelColor('#edece7')
 	drawDemoData("sanguo");
+	var layoutType = "fastFR";
+	runLayout(layoutType);
+	setTimeout(()=>{
+	stopLayout();
+	},3000)
+    visGraph.setLabelColor('#edece7')
 	// drawDemoData('sanguo');
 	initSlider()
+	visGraph.setLabelColor('#edece7')
+
 });
 
 function initSlider() {
@@ -880,6 +893,7 @@ function applyCluster(clusterType) {
 			})
 		} else {
 			var graph = visGraph.getVisibleData();
+
 			var cluster = new ClusterFactory(graph).createClutser(clusterType);
 			if (cluster) {
 				var clusters = cluster.applay();
@@ -963,7 +977,9 @@ var currentLayout = null,
 	loopName = null;
 
 function runLayout(layoutType) {
+
 	var _graph = visGraph.getVisibleData();
+	console.log(_graph)
 	currentLayout = new LayoutFactory(_graph, {
 		'apikey': 'dbp'
 	}).createLayout(layoutType);
@@ -973,6 +989,7 @@ function runLayout(layoutType) {
 		$('#layout-params .param').each(function() {   //为每个匹配元素规定要运行的函数
 			config[$(this).attr('name')] = $(this).val()  // attr 是设置属性或者返回属性
 		});
+		console.log(config)
 		currentLayout.resetConfig(config);
 
 		function loop() {
@@ -1009,6 +1026,7 @@ function fileOperate(method) {
 }
 
 function analyzeOperate(type) {
+
 	if (type == 'typeMapSet') {
 		nodeTypeSetter(visGraph.getTypeMap())
 	} else if (type == 'listAnalyze') {
@@ -1135,6 +1153,7 @@ function getCurrentDate(format, dateTime) {
 }
 
 function showDataTable() {
+	debugger
 	var graphData = visGraph.getGraphData();
 	layer.open({
 		type: 2,
@@ -1151,11 +1170,12 @@ function showDataTable() {
 }
 
 function visualAnalyze() {
+
 	var graphData = visGraph.getGraphData();
 	layer.open({
 		type: 2,
 		title: "1",
-		content: "visualAnalyze",     // 和django配置的Url对应   path('index/visualAnalyze/', views.visualAnalyze, name="visualAnalyze"), 中的visualAnalyze
+		content: "visualAnalyze",    // 和django配置的Url对应   path('index/visualAnalyze/', views.visualAnalyze, name="visualAnalyze"), 中的visualAnalyze
 		area: ['1000px', '600px'],
 		maxmin: true,
 		shade: false,
@@ -1280,34 +1300,17 @@ function initLayoutMenu() {     //todo 初始化布局模型
 		}, {
 			type: 'frDirect',
 			label: '弹簧力学布局'
-		}, {
-			type: 'fruchtermanReingold',
-			label: 'FruchReingold'
-		}, {
-			type: 'spring2',
-			label: 'SpringLayout'
-		}]
-	}, {
-		type: 'kawai',
-		label: '关系网络类',
-		icon: 'fa fa-connectdevelop',
-		childTypes: [{
-			type: 'fr',
-			label: '经典网络布局'
-		}, {
-			type: 'kk',
-			label: '关系路径布局'
 		}
-		// ,
-		// 	{
-		// 	type: 'arf',
-		// 	label: '球面网络布局'
+		// , {
+		// 	type: 'fruchtermanReingold',
+		// 	label: 'FruchReingold'
 		// }, {
-		// 	type: 'gather',
-		// 	label: '群组聚类布局'
+		// 	type: 'spring2',
+		// 	label: 'SpringLayout'
 		// }
 		]
-	}, {
+	}
+	, {
 		type: 'circle',
 		label: '圆形类',
 		icon: 'fa fa-circle-o',
@@ -1331,30 +1334,8 @@ function initLayoutMenu() {     //todo 初始化布局模型
 		// 	label: '球体布局'
 		// }
 		]
-	}, {
-		type: 'tree',
-		label: '树形结构类',
-		icon: 'fa fa-sitemap',
-		childTypes: [{
-			type: 'hubsize',
-			label: '层级布局'
-		}, {
-			type: 'tree',
-			label: '树形布局'
-		}
-		// ,
-		// 	{
-		// 	type: 'topoCircle',
-		// 	label: '雪花布局'
-		// }, {
-		// 	type: 'radiatree',
-		// 	label: '径向布局'
-		// }, {
-		// 	type: 'balloon',
-		// 	label: '圆形树状布局'
-		// }
-		]
-	}, {
+	},
+		 {
 		type: 'other',
 		label: '其他布局',
 		icon: 'fa fa-code-fork',
@@ -1419,6 +1400,7 @@ function nodeTypeSetter(nodeTypeMap) {
 }
 
 function lineTypeSetter(lineTypeMap) {
+
 	var data = [];
 	for (var lineType in lineTypeMap) {
 		data.push({
@@ -1488,6 +1470,7 @@ function drawDemoData(dataNo, type) {
 }
 
 function loadGraph(gexfFile) {
+
 	$('#loading').show();
 	$.ajax({
 		url: (document.location.hash.length > 1 ? document.location.hash.substr(1) : gexfFile),
@@ -1532,22 +1515,25 @@ function loadGraph(gexfFile) {
 }
 
 function renderGraph(graphData, icontype) {
+    debugger
 	$('#loading').show();
+    if(graphData==undefined ||graphData ==""){
+    	$('#loading').hide()
+    	return false;
+	}
 	var nodeColor = $.trim($('#nodeColor').val());
-	var labelColor = $.trim($('#labelColor').val());
+	var labelColor = '#ebe9e2';
 	var linkColorType = $('#linkColorType').val();
 	var linkColor = $.trim($('#linkColor').val());
 	var nodeCount = graphData.nodes.length;
-	var showlabel = false;
-	if (nodeCount < 200) {
-		showlabel = true
-	}
+	var showlabel = true;
+
 	var config = {
 		'nodeColor': nodeColor,
 		'nodeSize': 20,
 		'linkColorType': linkColorType,
 		'linkColor': linkColor,
-		'labelColor': labelColor,
+		'labelColor': '#ebe9e2',
 		'showlabel': showlabel
 	};
 	visGraph.drawData(graphData, config, icontype);
@@ -1556,6 +1542,14 @@ function renderGraph(graphData, icontype) {
 	$("#linkNum").text(visGraph.links.length);
 	layer.closeAll();
 	$('#loading').hide()
+	//自动触发弹性布局
+	visGraph.setLabelColor('#edece7')
+	var layoutType = "fastFR";
+	runLayout(layoutType);
+	setTimeout(()=>{
+	stopLayout();
+	},3000)
+	visGraph.setLabelColor('#edece7')
 }
 
 window.renderGraph = renderGraph;
@@ -1565,6 +1559,7 @@ layui.config({
 	base: '../../static/foodKG/vip/assets/module/'
 }).use(['layer', 'config'], function() {
 	var $ = layui.jquery;
+	debugger
 	var layer = layui.layer;
 	var config = layui.config;
 	getCurrentUser();
@@ -1584,6 +1579,7 @@ layui.config({
 			})
 		}
 	};
+
 
 	function toLogin() {
 		var currentUser = config.getToken();
