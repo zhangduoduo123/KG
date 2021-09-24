@@ -778,16 +778,19 @@ $(function() {
 	});
 	debugger
 	visGraph.setLabelColor('#edece7')
-	drawDemoData("sanguo");
+	visGraph.nodeWrapText(true)
+	drawDemoData("food_anquan");
 	var layoutType = "fastFR";
 	runLayout(layoutType);
 	setTimeout(()=>{
 	stopLayout();
 	},3000)
     visGraph.setLabelColor('#edece7')
+	visGraph.nodeWrapText(true)
 	// drawDemoData('sanguo');
 	initSlider()
 	visGraph.setLabelColor('#edece7')
+	visGraph.nodeWrapText(true)
 
 });
 
@@ -1544,12 +1547,14 @@ function renderGraph(graphData, icontype) {
 	$('#loading').hide()
 	//自动触发弹性布局
 	visGraph.setLabelColor('#edece7')
+	visGraph.nodeWrapText(true)
 	var layoutType = "fastFR";
 	runLayout(layoutType);
 	setTimeout(()=>{
 	stopLayout();
 	},3000)
 	visGraph.setLabelColor('#edece7')
+	visGraph.nodeWrapText(true)
 }
 
 window.renderGraph = renderGraph;

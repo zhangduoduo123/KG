@@ -12,6 +12,29 @@ class Neo4j_Handle():
 		self.graph = Graph("10.2.172.49:7474", username="neo4j", password="root")
 		self.matcher = NodeMatcher(self.graph)
 
+
+
+	def get_Disable(self, name) -> list:
+		'''
+       查找毒性等级
+        '''
+		data2 = self.graph.run(
+			"MATCH (m:med)-[r1]-(n:VtypeCountry3) "
+			"WHERE  m.name = $name "
+			"RETURN m.name as a,n.name as b", name=name).data()
+
+		ls = []
+		for an in data2:
+			start_name = an['a']
+			end_name = an['b']
+			ls.append(start_name)
+			ls.append('是否禁用')
+			ls.append(end_name)
+			ls.append(0)
+			ls.append(1)
+
+		new_list_t = [ls[i:i + 5] for i in range(0, len(ls), 5)]
+		return new_list_t
 	def get_res_sample(self, name, type) -> list:
 			'''
            查找抽检数据
@@ -23,14 +46,14 @@ class Neo4j_Handle():
 			data2 = self.graph.run(
 				"MATCH(t:AnimalType{name:$rtype})-[r5]-(q:res_event)-[r4]-(p: med)-[r2: 残留药物]-(m:food_event)-[r1: 抽检食物]-(n:food{foodtype:$type}) "
 				"WHERE  p.name = $name "
-				"WITH  r4,q,p, m, n,t, r1, r2,r5 match(q: res_event)-[r3]-(q1:MaxRes) "
-				"RETURN r1,r2,r3,r4,r5", name=name,type=type,rtype=rtype).data()
+				"WITH  r4,q,p, m, n,t, r1, r2,r5 match (q1:MaxRes)-[r3]-(q:res_event)-[]-(p:med)-[]-(m:food_event)-[r6]-(ww:res) "
+				"RETURN r1,r2,r3,r4,r5,r6", name=name,type=type,rtype=rtype).data()
 
 			data1 = self.graph.run(
 				"MATCH(t:AnimalType{name:$rtype})-[r5]-(q:res_event)-[r4]-(p: med)-[r2: 残留药物]-(m:food_event)-[r1: 抽检食物]-(n:food{foodtype:$type}) "
 				"WHERE  p.name = $name "
-				"WITH  r4,q,p, m, n,t, r1, r2,r5 match(q: res_event)-[r3]-(q1:MaxRes) "
-				"RETURN collect(t.name) as t,collect(p.name) as p,collect(m.name) as m,collect(n.name) as n,collect(q.name) as q,collect(q1.name) as q1",
+				"WITH  r4,q,p, m, n,t, r1, r2,r5 match (q1:MaxRes)-[r3]-(q:res_event)-[]-(p:med)-[]-(m:food_event)-[r6]-(ww:res) "
+				"RETURN collect(ww.name) as ww,collect(t.name) as t,collect(p.name) as p,collect(m.name) as m,collect(n.name) as n,collect(q.name) as q,collect(q1.name) as q1",
 				name=name,type=type,rtype=rtype).data()
 			entitycolor = dict()
 			for an in data1:
@@ -41,10 +64,11 @@ class Neo4j_Handle():
 					entitycolor[an['t'][cnt]] = 3
 					entitycolor[an['q'][cnt]] = 4
 					entitycolor[an['q1'][cnt]] = 5
+					entitycolor[an['ww'][cnt]] = 6
 
 
 			ls = []
-			b = ['r1', 'r2', 'r3', 'r4', 'r5']
+			b = ['r1', 'r2', 'r3', 'r4', 'r5', 'r6']
 			for an in data2:
 				for i in b:
 					rel = an[i]
@@ -58,7 +82,11 @@ class Neo4j_Handle():
 					ls.append(entitycolor[end_name])
 
 			new_list_t = [ls[i:i + 5] for i in range(0, len(ls), 5)]
-			return new_list_t
+			temp = []
+			for i in new_list_t:
+				if i not in temp:
+					temp.append(i)
+			return temp
 
 	def get_res(self, name,ani) -> list:
 		data2 = self.graph.run(
@@ -160,6 +188,8 @@ class Neo4j_Handle():
 				ls.append(entitycolor[end_name])
 
 		new_list_t = [ls[i:i + 5] for i in range(0, len(ls), 5)]
+
+
 		return new_list_t
 	def get_sample_year(self, name,year) -> list:
 			'''
@@ -565,6 +595,35 @@ class Neo4j_Handle():
 
 		return answer_dict
 
+    #某兽药在不同食物种类上的检出率
+	def veterinary_foodtype(self, name,medtype):
+		answer = self.graph.run(
+			"MATCH  (p:med{medtype:$medtype})-[r2:残留药物]-(m:food_event)-[r1:所属地区]-(n:area) "
+			
+			"WITH p,m,n,r1,r2 match (m:food_event)-[r3:抽检食物]-(q:food) "
+			"RETURN  q.foodtype as name ,count(q.foodtype) as rate ", name=name, medtype=medtype).data()
+
+		answer_dict = {}
+		answer_name = []
+		answer_list = []
+		for an in answer:
+			result = {}
+			relation_type = ''
+			start_name = an['name']
+			end_name = an['rate']
+			if end_name > 200:
+				result["source"] = {'name': start_name}
+				result['type'] = relation_type
+				result['target'] = {'name': end_name}
+				answer_list.append(result)
+				answer_name.append(str(start_name) + '----' + str(end_name))
+		answer_dict['answer'] = answer_name
+		answer_dict['list'] = answer_list
+
+		if len(answer_name) == 0:
+			return []
+
+		return answer_dict
 # 1 问题3 某时间-某地区-各种类食物中兽药抽检频次
 	def veterinary_rate_1(self, name,medtype):
 		answer = self.graph.run(

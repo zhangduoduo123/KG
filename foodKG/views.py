@@ -58,7 +58,8 @@ def test(request):
 			[r"(.*?)关于(.*?)的残留标准",],#6
 			#金霉素关于水产的抽检和残留标准数据
 			[r"(.*?)关于(.*?)的抽检和残留标准数据",],#7
-			[],
+			#金霉素是禁用兽药吗
+			[r"(.*?)是禁用兽药吗"],#8
 
 
 			#renlele
@@ -124,6 +125,11 @@ def test(request):
 			name = m[0]
 
 			ret_dict = neo4jconn.get_tox_level(name)
+		elif classfication_num == 8:
+			m = re.findall(pattern[8][0], question)
+			name = m[0]
+
+			ret_dict = neo4jconn.get_Disable(name)
 		elif classfication_num == 6:
 			m = re.findall(pattern[6][0], question)
 			name = m[0][0]
